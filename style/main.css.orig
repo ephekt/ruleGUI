@@ -1,0 +1,362 @@
+body {
+	  background-color: #F8F8F8;
+	}
+
+input.rounded {
+	border: 1px solid #ccc;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+	-moz-box-shadow: 2px 2px 3px #666;
+	-webkit-box-shadow: 2px 2px 3px #666;
+	box-shadow: 2px 2px 3px #666;
+	font-size: 14px;
+	padding: 4px 7px;
+	outline: 0;
+	-webkit-appearance: none;
+}
+input.rounded:focus {
+	border-color: #9999FF;
+}
+
+.draggable{
+    border: 1px solid #ccc;
+    height:2em;
+    width:4em;
+    line-height:2em;
+    padding: 0.2em;
+    margin-left: 0.2em;
+    margin-right: 0.2em;
+    display:inline-block;
+    border-radius:20px;
+    -moz-border-radius:20px;
+    -webkit-border-radius:20px;
+    -khtml-border-radius:20px;
+    font-size:150%;
+    color:#000;
+    text-align:center;
+    background:#fff}
+
+.draggable:hover{
+color:#000;
+text-decoration:none;
+background:#bbb}
+
+.draggable:disabled{
+    background:#aaa;}
+
+
+
+.circle{
+width:120px;
+display:table-cell;
+border-radius:20px;
+-moz-border-radius:20px;
+-webkit-border-radius:20px;
+-khtml-border-radius:20px;
+font-size:15px;
+color:#000;
+vertical-align:middle;
+text-align:center;
+background:#fff}
+
+.dragList{
+}
+
+.dragList:hover{
+}
+
+button.square{
+height:25px;
+width:50px;
+}
+
+div.ruleComp{
+    float:left;
+    border:1px solid black;
+    padding: 0.5em;
+    margin:5px;
+}
+
+div.ruleComp:hover{
+background:#bbb;
+}
+
+#dropdowns {
+  display: table;
+  height: 42px;
+  line-height: 42px;
+  color: #fff;
+}
+#dropdowns .dropdown {
+  display: inline-block;
+  position: relative;
+  z-index: 4;
+  border-right: 1px solid #606060;
+  cursor: pointer;
+}
+#dropdowns .dropdown .text {
+  font-family: 'ProximaNova-Bold';
+  line-height: 42px;
+  height: 42px;
+  display: inline-block;
+  padding-left: 15px;
+}
+#dropdowns .dropdown.focused {
+  background-color: #4c4d4e;
+}
+#dropdowns .dropdown .drop_button {
+  display: inline-block;
+  cursor: pointer;
+  display: block;
+  display: inline-block;
+  background-image: url('/Resources/core/img/arrow-large-icons.png');
+  width: 40px;
+  height: 40px;
+  background-position: 0px 0px;
+  content: '';
+  display: block;
+  display: inline-block;
+  height: 40px;
+  width: 40px;
+  vertical-align: middle;
+}
+#dropdowns .dropdown .drop_button:hover {
+  display: block;
+  display: inline-block;
+  background-image: url('/Resources/core/img/arrow-large-icons.png');
+  width: 40px;
+  height: 40px;
+  background-position: 0px -40px;
+  content: '';
+  display: block;
+  display: inline-block;
+  height: 40px;
+  width: 40px;
+  vertical-align: middle;
+}
+#dropdowns .dropdown .drop_button.visible {
+  display: block;
+  display: inline-block;
+  background-image: url('/Resources/core/img/arrow-large-icons.png');
+  width: 40px;
+  height: 40px;
+  background-position: 0px 0px;
+  content: '';
+  display: block;
+  display: inline-block;
+  height: 40px;
+  width: 40px;
+  vertical-align: middle;
+}
+#dropdowns .dropdown .drop_button.visible:hover {
+  display: block;
+  display: inline-block;
+  background-image: url('/Resources/core/img/arrow-large-icons.png');
+  width: 40px;
+  height: 40px;
+  background-position: 0px -40px;
+  content: '';
+  display: block;
+  display: inline-block;
+  height: 40px;
+  width: 40px;
+  vertical-align: middle;
+}
+#dropdowns .dropdown .drop_button.visible ~ .dropMenu {
+  display: block;
+}
+#dropdowns .dropdown .drop_button.disabled {
+  display: block;
+  display: inline-block;
+  background-image: url('/Resources/core/img/arrow-large-icons.png');
+  width: 40px;
+  height: 40px;
+  background-position: 0px -80px;
+  content: '';
+  display: block;
+  display: inline-block;
+  height: 40px;
+  width: 40px;
+  vertical-align: middle;
+}
+#dropdowns .dropdown .expand {
+  display: inline-block;
+  vertical-align: middle;
+  cursor: pointer;
+  display: block;
+  display: inline-block;
+  background-image: url('/Resources/core/img/arrow-icons.png');
+  width: 22px;
+  height: 22px;
+  background-position: -22px 0px;
+  content: '';
+  display: block;
+  display: inline-block;
+  height: 22px;
+  width: 22px;
+  vertical-align: middle;
+}
+#dropdowns .dropdown .expand:hover {
+  display: block;
+  display: inline-block;
+  background-image: url('/Resources/core/img/arrow-icons.png');
+  width: 22px;
+  height: 22px;
+  background-position: -22px -22px;
+  content: '';
+  display: block;
+  display: inline-block;
+  height: 22px;
+  width: 22px;
+  vertical-align: middle;
+}
+#dropdowns .dropdown .expand.visible {
+  display: block;
+  display: inline-block;
+  background-image: url('/Resources/core/img/arrow-icons.png');
+  width: 22px;
+  height: 22px;
+  background-position: 0px 0px;
+  content: '';
+  display: block;
+  display: inline-block;
+  height: 22px;
+  width: 22px;
+  vertical-align: middle;
+}
+#dropdowns .dropdown .expand.visible:hover {
+  display: block;
+  display: inline-block;
+  background-image: url('/Resources/core/img/arrow-icons.png');
+  width: 22px;
+  height: 22px;
+  background-position: 0px -22px;
+  content: '';
+  display: block;
+  display: inline-block;
+  height: 22px;
+  width: 22px;
+  vertical-align: middle;
+}
+#dropdowns .dropdown .expand.visible ~ .dropMenu {
+  display: block;
+}
+#dropdowns .dropdown .expand.disabled {
+  display: block;
+  display: inline-block;
+  background-image: url('/Resources/core/img/arrow-icons.png');
+  width: 22px;
+  height: 22px;
+  background-position: 0px -44px;
+  content: '';
+  display: block;
+  display: inline-block;
+  height: 22px;
+  width: 22px;
+  vertical-align: middle;
+}
+#dropdowns .dropdown .dropLabel {
+  display: inline-block;
+}
+#dropdowns .dropdown .dropItem {
+  display: block;
+  white-space: nowrap;
+}
+#dropdowns .dropdown .dropItem.disabled {
+  color: #666666;
+}
+#dropdowns .dropdown .dropItem.disabled .checkbox {
+  visibility: hidden;
+}
+#dropdowns .dropdown .dropItem .checkbox {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+  margin-right: 7px;
+}
+#dropdowns .dropdown .dropItem .checkbox.emptyCheck {
+  display: block;
+  display: inline-block;
+  background-image: url('/Resources/core/img/checkbox-icons.png');
+  width: 18px;
+  height: 18px;
+  background-position: 0px 0px;
+  content: '';
+  display: block;
+  display: inline-block;
+  height: 18px;
+  width: 18px;
+  vertical-align: middle;
+}
+#dropdowns .dropdown .dropItem .checkbox.emptyCheck:hover {
+  display: block;
+  display: inline-block;
+  background-image: url('/Resources/core/img/checkbox-icons.png');
+  width: 18px;
+  height: 18px;
+  background-position: 0px -18px;
+  content: '';
+  display: block;
+  display: inline-block;
+  height: 18px;
+  width: 18px;
+  vertical-align: middle;
+}
+#dropdowns .dropdown .dropItem .checkbox.fullCheck {
+  display: block;
+  display: inline-block;
+  background-image: url('/Resources/core/img/checkbox-icons.png');
+  width: 18px;
+  height: 18px;
+  background-position: -36px 0px;
+  content: '';
+  display: block;
+  display: inline-block;
+  height: 18px;
+  width: 18px;
+  vertical-align: middle;
+}
+#dropdowns .dropdown .dropItem .checkbox.fullCheck:hover {
+  display: block;
+  display: inline-block;
+  background-image: url('/Resources/core/img/checkbox-icons.png');
+  width: 18px;
+  height: 18px;
+  background-position: -36px -18px;
+  content: '';
+  display: block;
+  display: inline-block;
+  height: 18px;
+  width: 18px;
+  vertical-align: middle;
+}
+#dropdowns .dropdown .dropItem .checkbox.partialCheck {
+  display: block;
+  display: inline-block;
+  background-image: url('/Resources/core/img/checkbox-icons.png');
+  width: 18px;
+  height: 18px;
+  background-position: -18px 0px;
+  content: '';
+  display: block;
+  display: inline-block;
+  height: 18px;
+  width: 18px;
+  vertical-align: middle;
+}
+#dropdowns .dropdown .dropItem .checkbox.partialCheck:hover {
+  display: block;
+  display: inline-block;
+  background-image: url('/Resources/core/img/checkbox-icons.png');
+  width: 18px;
+  height: 18px;
+  background-position: -18px -18px;
+  content: '';
+  display: block;
+  display: inline-block;
+  height: 18px;
+  width: 18px;
+  vertical-align: middle;
+}
