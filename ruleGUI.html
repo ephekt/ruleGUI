@@ -9,8 +9,8 @@
 <body>
 
 <h1>Rule Creation</h1>
-<script src = "/usr/share/javascript/mootools/mootools.js"></script>
-<script src = "/usr/share/javascript/mootools/mootools-more.js"></script>
+<script src = "./Source/mootools.js"></script>
+<script src = "./Source/mootools-more.js"></script>
 
 <p style="color:red; display:block; font-size:100%" id="error"></p> 
 <button id="memberShow" class="circle" style="width:200px">Make Member Rule</button>
@@ -25,6 +25,13 @@
     <ul id="curEach" class="compList" style="width:15%"></ul>
   </div>
 </div>
+<!--
+<div style="float:left">
+  <span id="autoDraggable" class="draggable"></span>
+  <br/>
+  <input id="autoComplete"></input>
+</div>
+-->
 <ul id="curRule" class="compList" style="width:80%;"></ul>
 <button class="circle" id="finishRule" onclick="publishRule();">Finish Rule</button>
 
@@ -137,79 +144,13 @@
 </div>
 <script src = "varselect.js"></script>
 <script src = "data.js"></script>
+<script type="text/javascript" src="./Source/Observer.js"></script>
+<script type="text/javascript" src="./Source/Autocompleter.js"></script>
+<script type="text/javascript" src="./Source/Autocompleter.Local.js"></script>
 <script type="text/javascript" onclick="">
 
+var tokens = [];
 var uniqueFields = ["amount"];
-
-/*
-var uniqueCats = {"funds":{"General Funds":
-                           {"General Fund":
-                            {"Public Services Donation":{},"Child Care Fund":{},"Emergency Preparedness":{},"Family Resource":{}},
-                            "Enterprise Funds":
-                            {"Airport Enterprise Fund":{},"Electric Fund":{},"Fiber Fund":{},"Gas Fund":{},"Refuse Fund":{},"Storm Drainage":{},"Wastewater Collection":{},"Wastewater Treatment":{},"Water Fund":{}},
-                            "Capital Funds":
-                            {"Capital Improvement Fund":{}},
-                            "Debt Service Funds":
-                            {"Civic Center Debt 01-02":{},"Golf Course Improvement":{},"Library Projects":{},"Parking 02 COP Taxable":{}},
-                            "Internal Services Funds":
-                            {"General Benefits & Insurance":{},"Liability Insurance":{},"Payroll Clearing":{},"Printing & Mailing Services Fund":{},"Retiree Health Benefits Fund":{},"Technology Fund":{},"Vehicle Maintenance Fund":{},"Worker's Comp":{}},
-                            "Special Revenue Funds":
-                            {"Other Special Revenue Funds":{},"Business Improvement":{},"Community Development":{},"Federal and State Revenue":{},"Housing In-Lieu":{},"Public Benefit":{},"Special Districts":{},"Stanford Medical Center":{},"Street Improvement":{},"Traffic Mitigation and Parking":{},"University Avenue Parking":{}}}},
-
-                  "departments":{"Administrative Services":
-                                 {"Accounting":{},"Budget":{},"Administration":{},"Purchasing":{},"Real Estate":{},"Treasury":{}},
-
-                                 "City Attorney":
-                                 {"Administration":{},"Consultation and Advisory":{},"Litigation\/Dispute Resolution":{},"Official & Administration":{}},
-
-                                 "City Auditor":                      
-                                 {"Audit Services":{}},
-
-                                 "City Clerk":
-                                 {"Administration":{},"Administrative Citations":{},"Council Support Services":{},"Election\/Conflict of Interest":{},"Legislative Records":{},"Public Information":{}},
-
-                                 "City Council":
-                                 {"Administration":{},"City Council Operations":{}},
-                                 
-                                 "City Manager":
-                                 {"Economic Development":{},"Public Communication":{},"Administration":{},"City Management":{}},
-
-                                 "Community Services":
-                                 {"Administration":{},"Arts & Culture":{},"Cubberley & Human Services":{},"Open Space\/Parks and Golf":{},"Recreation & Youth Sciences":{}},
-
-                                 "Fire":
-                                 {"Emergency Response":{},"Environmental Safety":{},"Fire Administration":{},"Records & Info. Management":{},"Training & Personnel":{}},
-
-                                 "Human Resources":
-                                 {"Administration":{},"Employee Compensation":{},"Employee Development":{},"Risk Management":{},"Workforce Recruitment":{}},
-
-                                 "Library":
-                                 {"Collections Management":{},"Library Services Administration":{},"Public Services":{}},
-
-                                 "Planning":
-                                 {"Building":{},"Administration":{},"Planning":{},"Econ Develop":{}},
-
-                                 "Police":
-                                 {"Administration":{},"Animal Services":{},"Field Services":{},"Investigation\/Crime Prevention":{},"Parking Services":{},"Police Personnel Selection":{},"Technical Services":{},"Traffic Services":{}},
-
-                                 "Public Works":
-                                 {"Administration":{},"Engineering":{},"Streets":{},"Structure and Grounds":{},"Trees":{},"Other Funds":{}},
-
-                                 "Non-Departmental":
-                                 {"Non-Departmental Divisions":{}},
-
-                                 "Airport":
-                                 {"Airport Enterprise":{}},
-
-                                 "Utilities":
-                                 {"Administration":{},"Capital Improvement Program":{},"Customer Service":{},"Demand Side Mgmt":{},"Engineering (Operating)":{},"Operations & Maintenance":{},"Resource Management":{}}},
-
-                  "categories":{"Expense":
-                                {"Allocated Charges":{},"Contract Services":{},"Facilities & Equip Purchases":{},"General Expense":{},"Salaries & Benefits":{},"Supplies & Materials":{},"Capital Improvement":{},"Debt Service":{},"Utility Purchases & Charges":{},"Net Sales":{},"Wastewater Treatment":{},"Rents & Leases":{},"Trans Out":{},"Trans to CIP":{}},
-
-                                "Revenue":
-                                {"Charges for Services":{},"Other Revenue":{},"Charges to Other Funds":{},"Permits and Licenses":{},"Sales Taxes":{},"Trans In":{},"From Other Agencies":{},"Rental Income":{},"Other Taxes and Fines":{},"Return on Investments":{},"Property Taxes":{},"Documentary Transfer Tax":{},"Net Sales":{},"Transient Occupancy Tax":{},"Utility Users Tax":{},"Other Income":{}}}};
-*/
 
 //Initialization Code;
 
@@ -314,7 +255,7 @@ yearConst.store('spec', undefined);
 
 yearsAgoValue.onkeyup = function() {
     var val = toNum(yearsAgoValue.value.trim());
-    if (val < 1 || isNaN(val)) {
+    if (isNaN(val) || val < 1 || !isInt(val)) {
         yearsAgo.store('spec', undefined);
         yearsAgo.set('text', 'x Years Ago');
         return;
@@ -328,7 +269,7 @@ yearsAgoValue.onkeyup = function() {
 
 yearConstValue.onkeyup = function() {
     var val = toNum(yearConstValue.value.trim());
-    if (val < 1 || isNaN(val)) {
+    if (isNaN(val) || val < 1 || !isInt(val)) {
         yearConst.store('spec', undefined);
         yearConst.set('text', 'Year x');
         return;
@@ -403,6 +344,8 @@ fieldSel.title.set('html', 'Fields');
 function initFields(fields) {
     for (var i = 0; i < fields.length; i++) {
         listDraggable(fieldSel.addOption(fields[i]), 'field', 'field');
+        var token = {value: fields[i], type: 'field', spec: fields[i]};
+        tokens.push(token);
     }
 }
 
@@ -1078,6 +1021,15 @@ function listDraggable(elem, dragClassOverride, typeOverride, specOverride, mous
 /* Right at the beginning, we make elements with the class 'draggable' actually draggable.
    We also do a bit of special handling */
 window.addEvent('domready', function(){
+/*
+    new Autocompleter.Local('autoComplete', tokens, {
+        minLength: 1,
+        selectMode: 'type-ahead',
+        injectChoice: injectChoice,
+        choiceFunction: choiceFunction,
+        selectFunction: selectFunction
+    });
+*/
     var timeout;
     var drgbs = $$('.draggable');
     drgbs.each(function(drgb) {
@@ -2210,6 +2162,62 @@ function publishRule() {
         console.log(generateJSON());
         console.log(generateJS());
     //}
+}
+
+function injectChoice(token){
+    var choice = new Element('li');
+    new Element('span', {'html': this.markQueryValue(token.value)}).inject(choice);
+    new Element('span', {
+        'class': 'type-info',
+        'html': token.type
+    }).inject(choice);
+    choice.store('type', token.type);
+    choice.store('spec', token.spec);
+    choice.inputValue = token.value;
+    this.addChoiceEvents(choice).inject(this.choices);
+}
+
+//TODO: onEnter inject
+
+autoDraggable = $('autoDraggable')
+function selectFunction(choice) {
+    autoDraggable.set('text', choice.inputValue);
+    var type = choice.retrieve('type');
+    autoDraggable.store('type', type);
+    autoDraggable.set('class', 'draggable ' + type);
+    autoDraggable.store('spec', choice.retrieve('spec'));
+}
+
+function isInt(n) {
+   return n % 1 === 0;
+}
+
+function choiceFunction(queryValue) {
+    var numVal = toNum(queryValue.trim());
+    if (isNaN(numVal))
+        return;
+    
+    tokenArray = new Array();
+    var valToken = {name: numVal
+                    , type: 'value'
+                    , spec: numVal
+                   };
+    tokenArray.push(valToken);
+
+    if (numVal > 0 && isInt(numVal)) {
+        var yearToken = {name: 'Year' + numVal
+                         , type: 'year'
+                         , spec: numVal
+                        };
+        tokenArray.push(yearToken);
+        var yeaRelToken = {name: numVal + 'Years Ago'
+                           , type: 'year'
+                           , spec: 'current_year - ' + numVal
+                          };
+        tokenArray.push(yearRelToken);
+    }
+    
+    tokenArray.each(injectChoice, this);
 }
 
 </script>
