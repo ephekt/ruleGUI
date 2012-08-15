@@ -1,0 +1,178 @@
+Item
+
+        Items are the core of the budget. These represent sets of the
+        various rows of a given dataset (line items in the budget,
+        employees in the dataset). 
+
+        Items are selected from dropdowns, with one top level dropdown for
+        each dataset. Within these, the various identifiers
+        (e.g. department, fund, etc.) can be selected to modify the set of
+        rows that you're examining. At any given level, multiple
+        identifiers can be selected, which is the equivalent of an or
+        (e.g. if you select Fire department and Police department, the
+        item set contains all line items in both departments). Identifiers
+        are organized in hierarchical trees, with each tree being
+        independant of each other (so department is above division is
+        above program, superfund is above fund is above subfund, etc.),
+        and as many identifiers from each tree can be specified in order
+        to narrow down a set. One does not need to traverse all the way
+        down the tree. For example, if you just want to look at the Fire
+        department, you do not need to select divisions within it. By
+        default all are selected. You can, however, select only specific
+        divsions if desired.
+
+        If one just wants to select a single identifier (e.g. Fire
+        Department), rather than checking all their identifiers they can
+        simply drag that item from the list. Dragged items automatically
+        inherent their parents identifiers (e.g. if you drag the
+        administration division within the fire department dropdown, the
+        fire department identifier is automatically applied).
+
+        Items can be dragged to the current rule, in which case they are
+        treated as some operation on the set of items in order to make a
+        single value. By default the default field of the set is
+        summed. I'll explain what that means:
+        
+        Field:
+        
+                In addition to having identifiers (department etc.) in a
+                row you also have fields, the numerical data (e.g. salary,
+                dental benefits, etc.). In order to 'sum' a set of items,
+                we have to specify a field (e.g. row 1's salary + row 2's
+                salary + ...) that we are summing on. This can be done by
+                opening the field tab, where a list of available fields is
+                show. One then simply needs to drag these fields over an
+                item, and that item will be modified to have set
+                operations act on that field. 
+                
+                Note that if you want to operate on two fields, e.g. you
+                want the sum of all row's dental and medical benifits,
+                this must be done with two seperate items. That is to say,
+                you must sum all of the rows' dental benifits, and then add
+                that to the sum of all the rows' medical benifits. 
+                
+       Set Operators:
+
+                In order to produce a single numerical value from a set of
+                line items/employees, an operation must be applied to each
+                of the values within that set. Simply adding things
+                together is the default, but several other operations are
+                available. In order to select one of these operations, the
+                set operations tab must be opened and one of the buttons
+                dragged over an item. That item will be modified to use
+                that set operations
+
+           
+       In addition to these two set operators, there are two other item
+       modifiers which can be dragged to modify an item in the same way:
+
+       Year: 
+       
+                Year specifies which year of data to look at, and can be
+                specified in 4 ways. The default is to simply use the
+                current year (as in the year the rule is applied, not the
+                year that the rule is created). Another is to use the last
+                year specifier, which simply looks at the previous years
+                data. Other than that, years can be refered to relatively
+                (x years ago) or absolutely (2009) and used to modify an
+                item. 
+
+       Condition: 
+       
+                Conditions are used to narrow a set by testing the field
+                of an item. For example, you may want to collect the set
+                of all employees who have two dependents. To do this, you
+                would create an item that is all employees. Then, you
+                would open the condition tab; you can then drag the field
+                you want to check (in this case dependants), and compare
+                it to some numerical value or perhaps some other
+                field. One then drags this condition over the item they
+                want to modify, and the set is automatically trimmed to
+                contain only the things that fill that condition. 
+                
+      When a modifier is applied to an item, a small indicator appears on
+      the item. Modifiers can be removed by dragging that indicator away
+      from the item.
+
+      Member Rules:
+      
+      Items can be used in another way as well. When the 'Make Member
+      Rule' tab is opened, an item can be dragged to the sandbox
+      there. This will initiate the making of a 'member rule'. Member
+      rules apply a rule to each row within a set. Specification changes a
+      little bit in this environment. The -THIS- specifier gets added to
+      the item selector. What -THIS- does is always take on the identifier
+      of the current member. So, for example, if you're operating on all
+      line items in the fire department, you can use the -this- division
+      tag to ensure that any individual line item in the department is no
+      greater than 10% of the sum of the division it's in. The rule would
+      look like
+
+           (amount) (<) (.1) (X) (Sum Fire Department, -THIS- Division)
+
+      -THIS- appears at the top level of the hierarchy, even if an
+       identifier is already specified. For example, for the member rule
+       mentioned Fire department is specified, so there's no need for a
+       -THIS- department specifier, but for convenience it's still
+       available.
+
+       One intesting behavior to note about -THIS-. Even though it's
+       presented hierarchically like other specifiers in the tree, it has
+       slightly different selection behavior. For one, even if this is not
+       selected, a branch can still be fullchecked (have a full checkmark
+       indicating all subspecifiers are checked), and clicking on a parent
+       does not automatically check -THIS- specifiers below
+       it. Additionally, in a situation where the user is presented with
+       -THIS- department and -THIS- division below it, selecting -THIS-
+       department does not imply -THIS- division, although the reverse is
+       true. So unlike other items in the list/tree, checking the parent
+       -THIS- does not check the child -THIS-. This also means if you want
+       to look at both the department and division of an item, you have to
+       traverse the list. 
+
+       Each Rules:
+
+       There are situation where one wants to apply rules to every
+       specifier group (I.E. Each department can only grow 10 percent in a
+       year), in which case one uses the -EACH- specifier at the bottom of
+       the dropdown. These can be dragged into the sandbox in the 'Make
+       Iteration Rule' (name should be changed) tab. Like member rules, a
+       -THIS- specifier appears for every -EACH- specifier in the item (so
+       if you have EACH department and EACH superfund, -THIS- department
+       and -THIS- superfund will appear. (One thing to consider is
+       allowing set operators to be dragged into the 'each rule' sandbox,
+       in the same way fields work in member rules).
+
+Operators:
+
+        Operators are mathematical operators that operate on numerical
+        values in the field. +, -, *, / , maybe more
+
+Comparator:
+
+        Comparators are the enforcement element of a rule. They ensure
+        relationships between numerical values (less than, greater than,
+        equal). Right now assignment for member rules (where an item is
+        directly assigned, rather than an error being raised if the rule
+        doesn't match), is under this tab, but it probably shouldn't be.
+
+Value:
+
+        Values are numerical values.       
+      
+        
+Semantics:
+
+      Rules and conditions follow some basic semantics. For rules, as of
+      now, operators and comparators can only follow nouns, nouns cannot
+      follow eachother, and fields must have at least one item coming
+      before (they are assumed to use that items specifiers if not
+      attached to a particular item).  There must be exactly one
+      comparator in a rule. (right now, rules that are 'both  less than x
+      and greater than y' are not supported, but could easily be
+      added). There must be at least one budget item. Rules must end in a
+      noun. Assignments are only valid after a single item.
+
+      Conditions have some slight differences. Items in  conditions are
+      replaced with fields, and some rules, such as fields having to
+      follow an item, do not apply.     

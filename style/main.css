@@ -1,6 +1,6 @@
 body {
 	  background-color: #D8D8D8;
-	}
+}
 
 input.rounded {
 	border: 1px solid #ccc;
@@ -19,28 +19,105 @@ input.rounded:focus {
 	border-color: #9999FF;
 }
 
+.compList {
+    height:5em;
+    overflow: hidden;
+    white-space: nowrap;
+    border: 1px solid black;
+}
+.compList.highlight{
+    background-color:#98B5C1;
+}
+.compList.members{
+    border: 7px solid maroon;
+}
+
 .draggable{
     border: 1px solid #ccc;
     height:2em;
-    width:4em;
     line-height:2em;
-    padding: 0.2em;
+    padding-left: 1em;
+    padding-right: 1em;
+    margin-top: .5em;
     margin-left: 0.2em;
     margin-right: 0.2em;
     display:inline-block;
-    border-radius:20px;
-    -moz-border-radius:20px;
-    -webkit-border-radius:20px;
-    -khtml-border-radius:20px;
+    border-radius:.5em;
+    position: static;
+    -moz-border-radius:.5em;
+    -webkit-border-radius:.5em;
+    -khtml-border-radius:.5em;
     font-size:150%;
     color:#000;
     text-align:center;
-    background:#fff}
+    background:#fff;
+    z-index:9001;
+}
 
-.draggable:hover{
-color:#000;
-text-decoration:none;
-background:#bbb}
+.draggable.condition{
+}
+
+.draggable.field{
+}
+
+.draggable.year{
+}
+
+.draggable.set{
+}
+
+.draggable.item{
+}
+
+.draggable.highlight{
+    background-color:#98B5C1;
+}
+
+.draggable.value{
+}
+
+.draggable.hovered{
+    color:#000;
+    text-decoration:none;
+    background:#bbb;
+}
+
+.draggable.mod{
+    height:3em;
+    line-height:3em;
+    padding-left: 1em;    
+    padding-right: 1em;
+    font-size:45%;
+    margin-left: 0.3em;
+    margin-right: 0.3em; 
+    border-radius:.8em;
+    -moz-border-radius:.8em;
+    -webkit-border-radius:.8em;
+    -khtml-border-radius:.8em;
+}
+.draggable.mod.condition{
+    background:#f99;}
+.draggable.mod.condition.hovered{
+    background:#d77;}
+
+.draggable.mod.field{
+    background:#9f9;}
+.draggable.mod.field.hovered{
+    background:#7d7;}
+
+.draggable.mod.year{
+    background:#99f;
+}
+.draggable.mod.year.hovered{
+    background:#77d;
+}
+
+.draggable.mod.set{
+    background:#f9f;
+}
+.draggable.mod.set:hover{
+    background:#d7d;
+}
 
 .draggable:disabled{
     background:#aaa;}
@@ -48,12 +125,13 @@ background:#bbb}
 
 
 .circle{
-width:120px;
 display:table-cell;
 border-radius:20px;
 -moz-border-radius:20px;
 -webkit-border-radius:20px;
 -khtml-border-radius:20px;
+padding-left: 15px;
+padding-right: 15px;
 font-size:15px;
 color:#000;
 vertical-align:middle;
@@ -266,6 +344,9 @@ background:#bbb;
 #dropdowns .dropdown .dropItem.disabled {
   color: #666666;
 }
+#dropdowns .dropdown .dropItem.this {
+    display:none;
+}
 #dropdowns .dropdown .dropItem.disabled .checkbox {
   visibility: hidden;
 }
@@ -359,6 +440,16 @@ background:#bbb;
   height: 18px;
   width: 18px;
   vertical-align: middle;
+}
+.topDropMenu {
+    display: inline-block;
+    list-style-type: none; 
+    position: absolute;
+    top: 42px;
+    padding: 10px 35px 10px 10px;
+    color: white;
+    background-color: #383838;
+    border-top: 1px solid #4c4d4e;
 }
 .rootDropMenu {
   position: absolute;

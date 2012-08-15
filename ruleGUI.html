@@ -12,179 +12,212 @@
 <script src = "/usr/share/javascript/mootools/mootools.js"></script>
 <script src = "/usr/share/javascript/mootools/mootools-more.js"></script>
 
-<p style="color:red; display:block; font-size:100%" id="error"></p>  
+<p style="color:red; display:block; font-size:100%" id="error"></p> 
+<button id="memberShow" class="circle" style="width:200px">Make Member Rule</button>
+<button id="eachShow" class="circle" style="width:200px">Make Iteration Rule</button>
+<div id="specRuleChoices">
+  <div id="memberSelect" style="display:none;">
+    <p> Apply rules to every member of</p>
+    <ul id="curMembers" class="compList" style="width:15%"></ul>
+  </div>
+  <div id="eachSelect" style="display:none;">
+    <p> Apply rules to identifier groups</p>
+    <ul id="curEach" class="compList" style="width:15%"></ul>
+  </div>
+</div>
+<ul id="curRule" class="compList" style="width:80%;"></ul>
+<button class="circle" id="finishRule" onclick="publishRule();">Finish Rule</button>
 
-<ul id = "curRule" 
-    style = "width:80%;
-             height:5em;
-             overflow: hidden;
-             white-space: nowrap;
-             border: 1px solid black;">
-</ul>
+
 
 <br/><br/>
-<div id="std" style="float:left; display:inline; width:50%">
-  <div id="options" style="display:inline">
-    <button id="identSpec" class="circle">Item</button>
-    <button id="opSpec" class="circle">Operator</button>
-    <button id="compSpec" class="circle">Comparator</button>
-    <button id="valueSpec" class="circle">Value</button>
+<div id="std" style="float:left; display:inline; width:55%">
+  <div id="options" style="display:inline"> 
+    <button id="itemShow" class="circle">Item</button>
+    <button id="fieldShow" class="circle">Field</button>
+    <button id="yearShow" class="circle">Year</button>
+    <button id="setShow" class="circle">Set Operations</button>
+    <button id="opShow" class="circle">Operator</button>
+    <button id="compShow" class="circle">Comparator</button>
+    <button id="valueShow" class="circle">Value</button>
   </div>
   <br/>
   <div id="choices">
-    <div id="identSelect" style="display:none;">
-      <input type="radio" name="collectionType" value="" checked>Members of</input>
-      <input type="radio" name="collectionType" value="sum">Sum of</input>
-      <input type="radio" name="collectionType" value="mean">Mean of</input>
-      <input type="radio" name="collectionType" value="standard_deviation">Standard Deviation of</input>
+
+    <div id="itemSelect" style="display:none;">
+      <div id="dropdowns" class="dropdowns" style="display:inline-block;"></div>
       <br/>
-      <div id="dropdowns" class="dropdowns"></div>
-      <div style="position:relative;top:350px">
-        <div id="itemBox" style="float:left;width:15%;margin:20px"></div>
-        <div id = "itemCreation" style="float:left; width:20%">
+      <div style="display:inline-block; position:static;">
+        <div id="itemBox" style="float:left;width:23%;margin:20px"></div>
+        <div id="newItem" style="float:left;margin:20px">
           <strong style="width:100%">Create New Item</strong><br/>
-          <input class="rounded" id="newItemName" size="14"></input><br/>
-          <button class="circle" id="createNewItem" onclick="createItem()">Create</button><br/>
-          <button class="circle" id="deleteItem" onclick="deleteItem()">Delete</button>
+          Name: <input class="rounded" id="newItemName" size="8"></input><br/>
+          <ul id="itemVar" class="compList" style="width:75%"></ul>
+          <button class="circle" id="createNewItem" onclick="createVariable('item')">Create</button><br/>
+          <button class="circle" id="deleteValue" onclick="deleteVariable('item')">Delete</button>
         </div>
-        <div style="float:left; width:20%">
-          <li class="draggable" type="item" id="selectItem">Item</li>
+        <div id="itemConst" style="float:left;margin:20px">
         </div>
       </div>
+    </div>      
+
+    <div id="fieldSelect" style="display:none;">
+      <div id="fieldBox" style="float:left;width:13%;margin:20px"></div>
     </div>
+
+    <div id="yearSelect" style="display:none;">
+      <div style="float:left;margin:20px">
+        <input class="rounded" id="yearsAgoValue" size="3"></input> Years Ago <br/>
+        <span id="yearsAgo" class="draggable year">x Years Ago</span>
+      </div>
+      <div style="float:left;margin:20px">
+        Year <input class="rounded" id="yearConstValue" size="4"></input><br/>
+        <span id="yearConst" class="draggable year">Year x</span>
+      </div>
+      <div style="float:left;margin:20px">
+        <br/><br/>
+        <span id="lastYear" class="draggable year">Last Year</span>
+      </div>      
+    </div>
+
+    <div id="setSelect" style="display:none;">
+      <span id="sumSet" class="draggable set" >Sum</span>      <span id="meanSet" class="draggable set">Mean</span>    <br/>
+      <span id="medianSet" class="draggable set">Median</span>      <span id="stdDevSet" class="draggable set">Standard Deviation</span>    <br/>
+      <span id="minSet" class="draggable set">Minimum</span>      <span id="maxSet" class="draggable set">Maximum</span>    <br/>
+    </div>
+
     <div id="opSelect" style="display:none;">
-      <li id="addOp" class="draggable" type="operator" >+</li>      <li id="subOp" class="draggable" type="operator">-</li>    <br/>
-      <li id="multOp" class="draggable" type="operator" >X</li>      <li id="divOp" class="draggable" type="operator">&divide</li>    <br/>
+      <span id="addOp" class="draggable operator" >+</span>      <span id="subOp" class="draggable operator">-</span>    <br/>
+      <span id="multOp" class="draggable operator">X</span>      <span id="divOp" class="draggable operator">&divide</span>    <br/>
     </div>
 
     <div id="compSelect" style="display:none;">
-      <li id="ltComp" class="draggable" type="comparator">&lt</li>      <li id="gtComp" class="draggable" type="comparator">&gt</li>    <br/>
-      <li id="eqComp" class="draggable" type="comparator">=</li>      <li id="assignComp" class="draggable" type="comparator">assign</li>    <br/>
+      <span id="ltComp" class="draggable comparator">&lt</span>      <span id="gtComp" class="draggable comparator">&gt</span>    <br/>
+      <span id="eqComp" class="draggable comparator">=</span>      <span id="assignComp" class="draggable comparator">assign</span>    <br/>
     </div>
     
 
     <div id="valueSelect" style="display:none;">
-      <div id="varBox" style="float:left;width:15%;margin:20px"></div>
-      <div id="newVar" style="float:left;margin:20px">
+      <div id="valueBox" style="float:left;width:15%;margin:20px"></div>
+      <div id="newValue" style="float:left;margin:20px">
         <strong style="width:100%">Create New Variable</strong><br/>
-        <input class="rounded" id="newVarName" size="14"></input><br/>
-        <input class="rounded" id="newVarValue" size="14"></input><br/>
-        <button class="circle" id="createNewVar" onclick="createVariable()">Create</button><br/>
-        <button class="circle" id="deleteVar" onclick="deleteVariable()">Delete</button>
+        Name: <input class="rounded" id="newValueName" size="8"></input><br/>
+        Value: <input class="rounded" id="newValueAmt" size="8"></input><br/>
+        <button class="circle" id="createNewValue" onclick="createVariable('value')">Create</button><br/>
+        <button class="circle" id="deleteValue" onclick="deleteVariable('value')">Delete</button>
       </div>
       <div id="constant" style="float:left;margin:20px">
         <strong style="width:100%">Specify Constant</strong><br/>
         <input class="rounded" id="constValue" size="14"></input><br/>
-        <li class="draggable" type="value" id="selectConst"></li>
+        <span class="draggable value" id="selectConst"></span>
       </div>
     </div>
   </div>
 </div>
-<div id="cond" style="float:left; display:inline; width:50%">
-  <button id="condSpec" style="display:inline;" class="circle">Conditions</button>
+<div id="cond" style="float:left; display:inline; width:45%">
+  <button id="condShow" style="display:inline;" class="circle">Conditions</button>
   <div id="condSelect" style="display:none;">
     <div id="condBox" style="float:left;width:25%;margin:20px"></div>
     <div id="condCreation" style = "width:65%;float:right;">
       <!-- this eval is a little specific, worth taking note of -->
       <button class="circle" id="clearCond" onclick="clearCompList(curCond)">Clear Current Condition</button>
-      <ul id = "curCond" 
-          style = "height:5em;                 
-                   overflow: hidden;
-                   white-space: nowrap;
-                   border: 1px solid black;">
-      </ul>
+      <ul id="curCond" class="compList"></ul>
       <br/>
-      <div id = "condCreation" style="float:left; width:40%">
+      <div id = "condCreation" style="float:left; width:35%">
         <strong style="width:100%">Create New Condition</strong><br/>
-        <input class="rounded" id="newCondName" size="14"></input><br/>
-        <button class="circle" id="createNewCond" onclick="createCondition()">Create</button><br/>
-        <button class="circle" id="deleteCond" onclick="deleteCondition()">Delete</button>
+        Name: <input class="rounded" id="newConditionName" size="8"></input><br/>
+        <button class="circle" id="createNewCond" onclick="createVariable('condition')">Create</button><br/>
+        <button class="circle" id="deleteCond" onclick="deleteVariable('condition')">Delete</button>
       </div>
       <div style="float:right; width:40%">
-        <li class="draggable" type="condition" id="selectCond">Condition</li>
+        <span class="draggable condition" id="selectCond">Condition</span>
       </div>
     </div>
   </div>
 </div>
 <script src = "varselect.js"></script>
+<script src = "data.js"></script>
 <script type="text/javascript" onclick="">
 
+var uniqueFields = ["amount"];
+
+/*
 var uniqueCats = {"funds":{"General Funds":
                            {"General Fund":
-                            ["Public Services Donation","Child Care Fund","Emergency Preparedness","Family Resource"],
+                            {"Public Services Donation":{},"Child Care Fund":{},"Emergency Preparedness":{},"Family Resource":{}},
                             "Enterprise Funds":
-                            ["Airport Enterprise Fund","Electric Fund","Fiber Fund","Gas Fund","Refuse Fund","Storm Drainage","Wastewater Collection","Wastewater Treatment","Water Fund"],
+                            {"Airport Enterprise Fund":{},"Electric Fund":{},"Fiber Fund":{},"Gas Fund":{},"Refuse Fund":{},"Storm Drainage":{},"Wastewater Collection":{},"Wastewater Treatment":{},"Water Fund":{}},
                             "Capital Funds":
-                            ["Capital Improvement Fund"],
+                            {"Capital Improvement Fund":{}},
                             "Debt Service Funds":
-                            ["Civic Center Debt 01-02","Golf Course Improvement","Library Projects","Parking 02 COP Taxable"],
+                            {"Civic Center Debt 01-02":{},"Golf Course Improvement":{},"Library Projects":{},"Parking 02 COP Taxable":{}},
                             "Internal Services Funds":
-                            ["General Benefits & Insurance","Liability Insurance","Payroll Clearing","Printing & Mailing Services Fund","Retiree Health Benefits Fund","Technology Fund","Vehicle Maintenance Fund","Worker's Comp"],
+                            {"General Benefits & Insurance":{},"Liability Insurance":{},"Payroll Clearing":{},"Printing & Mailing Services Fund":{},"Retiree Health Benefits Fund":{},"Technology Fund":{},"Vehicle Maintenance Fund":{},"Worker's Comp":{}},
                             "Special Revenue Funds":
-                            ["Other Special Revenue Funds","Business Improvement","Community Development","Federal and State Revenue","Housing In-Lieu","Public Benefit","Special Districts","Stanford Medical Center","Street Improvement","Traffic Mitigation and Parking","University Avenue Parking"]}},
+                            {"Other Special Revenue Funds":{},"Business Improvement":{},"Community Development":{},"Federal and State Revenue":{},"Housing In-Lieu":{},"Public Benefit":{},"Special Districts":{},"Stanford Medical Center":{},"Street Improvement":{},"Traffic Mitigation and Parking":{},"University Avenue Parking":{}}}},
 
                   "departments":{"Administrative Services":
-                                 ["Accounting","Budget","Administration","Purchasing","Real Estate","Treasury"],
+                                 {"Accounting":{},"Budget":{},"Administration":{},"Purchasing":{},"Real Estate":{},"Treasury":{}},
 
                                  "City Attorney":
-                                 ["Administration","Consultation and Advisory","Litigation\/Dispute Resolution","Official & Administration"],
+                                 {"Administration":{},"Consultation and Advisory":{},"Litigation\/Dispute Resolution":{},"Official & Administration":{}},
 
                                  "City Auditor":                      
-                                 ["Audit Services"],
+                                 {"Audit Services":{}},
 
                                  "City Clerk":
-                                 ["Administration","Administrative Citations","Council Support Services","Election\/Conflict of Interest","Legislative Records","Public Information"],
+                                 {"Administration":{},"Administrative Citations":{},"Council Support Services":{},"Election\/Conflict of Interest":{},"Legislative Records":{},"Public Information":{}},
 
                                  "City Council":
-                                 ["Administration","City Council Operations"],
+                                 {"Administration":{},"City Council Operations":{}},
                                  
                                  "City Manager":
-                                 ["Economic Development","Public Communication","Administration","City Management"],
+                                 {"Economic Development":{},"Public Communication":{},"Administration":{},"City Management":{}},
 
                                  "Community Services":
-                                 ["Administration","Arts & Culture","Cubberley & Human Services","Open Space\/Parks and Golf","Recreation & Youth Sciences"],
+                                 {"Administration":{},"Arts & Culture":{},"Cubberley & Human Services":{},"Open Space\/Parks and Golf":{},"Recreation & Youth Sciences":{}},
 
                                  "Fire":
-                                 ["Emergency Response","Environmental Safety","Fire Administration","Records & Info. Management","Training & Personnel"],
+                                 {"Emergency Response":{},"Environmental Safety":{},"Fire Administration":{},"Records & Info. Management":{},"Training & Personnel":{}},
 
                                  "Human Resources":
-                                 ["Administration","Employee Compensation","Employee Development","Risk Management","Workforce Recruitment"],
+                                 {"Administration":{},"Employee Compensation":{},"Employee Development":{},"Risk Management":{},"Workforce Recruitment":{}},
 
                                  "Library":
-                                 ["Collections Management","Library Services Administration","Public Services"],
+                                 {"Collections Management":{},"Library Services Administration":{},"Public Services":{}},
 
                                  "Planning":
-                                 ["Building","Administration","Planning","Econ Develop"],
+                                 {"Building":{},"Administration":{},"Planning":{},"Econ Develop":{}},
 
                                  "Police":
-                                 ["Administration","Animal Services","Field Services","Investigation\/Crime Prevention","Parking Services","Police Personnel Selection","Technical Services","Traffic Services"],
+                                 {"Administration":{},"Animal Services":{},"Field Services":{},"Investigation\/Crime Prevention":{},"Parking Services":{},"Police Personnel Selection":{},"Technical Services":{},"Traffic Services":{}},
 
                                  "Public Works":
-                                 ["Administration","Engineering","Streets","Structure and Grounds","Trees","Other Funds"],
+                                 {"Administration":{},"Engineering":{},"Streets":{},"Structure and Grounds":{},"Trees":{},"Other Funds":{}},
 
                                  "Non-Departmental":
-                                 ["Non-Departmental Divisions"],
+                                 {"Non-Departmental Divisions":{}},
 
                                  "Airport":
-                                 ["Airport Enterprise"],
+                                 {"Airport Enterprise":{}},
 
                                  "Utilities":
-                                 ["Administration","Capital Improvement Program","Customer Service","Demand Side Mgmt","Engineering (Operating)","Operations & Maintenance","Resource Management"]},
+                                 {"Administration":{},"Capital Improvement Program":{},"Customer Service":{},"Demand Side Mgmt":{},"Engineering (Operating)":{},"Operations & Maintenance":{},"Resource Management":{}}},
 
                   "categories":{"Expense":
-                                ["Allocated Charges","Contract Services","Facilities & Equip Purchases","General Expense","Salaries & Benefits","Supplies & Materials","Capital Improvement","Debt Service","Utility Purchases & Charges","Net Sales","Wastewater Treatment","Rents & Leases","Trans Out","Trans to CIP"],
+                                {"Allocated Charges":{},"Contract Services":{},"Facilities & Equip Purchases":{},"General Expense":{},"Salaries & Benefits":{},"Supplies & Materials":{},"Capital Improvement":{},"Debt Service":{},"Utility Purchases & Charges":{},"Net Sales":{},"Wastewater Treatment":{},"Rents & Leases":{},"Trans Out":{},"Trans to CIP":{}},
 
                                 "Revenue":
-                                ["Charges for Services","Other Revenue","Charges to Other Funds","Permits and Licenses","Sales Taxes","Trans In","From Other Agencies","Rental Income","Other Taxes and Fines","Return on Investments","Property Taxes","Documentary Transfer Tax","Net Sales","Transient Occupancy Tax","Utility Users Tax","Other Income"]}};
-
+                                {"Charges for Services":{},"Other Revenue":{},"Charges to Other Funds":{},"Permits and Licenses":{},"Sales Taxes":{},"Trans In":{},"From Other Agencies":{},"Rental Income":{},"Other Taxes and Fines":{},"Return on Investments":{},"Property Taxes":{},"Documentary Transfer Tax":{},"Net Sales":{},"Transient Occupancy Tax":{},"Utility Users Tax":{},"Other Income":{}}}};
+*/
 
 //Initialization Code;
 
 //Defines a time (in milliseconds) that constitutes a click.
-CLICKTIME = 100;
+CLICKTIME = 200;
 
 //Defines the timeout for error messages
-errorTime = 10000;
+ERRORTIME = 10000;
 errorTimeout = null;
 errorArea = $$($('error'));
 
@@ -192,52 +225,188 @@ errorArea = $$($('error'));
   draggable components represent for the purpose of code
   generation 
  */
-$('addOp').store('spec','+');
-$('subOp').store('spec','-');
-$('multOp').store('spec','*');
-$('divOp').store('spec','/');
+addOp = $('addOp');
+addOp.store('spec','+');
+addOp.store('type','operator');
 
-$('ltComp').store('spec','<');
-$('gtComp').store('spec','>');
-$('eqComp').store('spec','==');
-$('assignComp').store('spec','=');
+subOp = $('subOp');
+subOp.store('spec','-');
+subOp.store('type','operator');
+
+multOp = $('multOp');
+multOp.store('spec','*');
+multOp.store('type','operator');
+
+divOp = $('divOp');
+divOp.store('spec','/');
+divOp.store('type','operator');
+
+ltComp = $('ltComp')
+ltComp.store('spec','<');
+ltComp.store('type','comparator');
+
+gtComp = $('gtComp');
+gtComp.store('spec','>');
+gtComp.store('type','comparator');
+
+eqComp = $('eqComp');
+eqComp.store('spec','==');
+eqComp.store('type','comparator');
+
+assignComp = $('assignComp')
+assignComp.store('spec','=');
+assignComp.store('type','comparator');
+
+sumSet = $('sumSet');
+sumSet.store('spec','sum');
+sumSet.store('type','set');
+
+meanSet = $('meanSet');
+meanSet.store('spec','mean');
+meanSet.store('type','set');
+
+medianSet = $('medianSet');
+medianSet.store('spec','median');
+medianSet.store('type','set');
+
+stdDevSet = $('stdDevSet');
+stdDevSet.store('spec','standard_deviation');
+stdDevSet.store('type','set');
+
+minSet = $('minSet');
+minSet.store('spec','minimum');
+minSet.store('type','set');
+
+maxSet = $('maxSet');
+maxSet.store('spec','maximum');
+maxSet.store('type','set');
+
+
+$('selectCond').store('type', 'condition');
+
+lastYearDrag = $('lastYear')
+lastYearDrag.store('type', 'year');
+lastYearDrag.store('spec', '(current_year-1)');
+
 
 //Selconst is a mootools object to cleanly set the innerHTML
 selConst = $$($('selectConst'));
+
+selConst.store('type', 'value');
+
 //constval is a DOM object because it's easier to set events for them
 constVal = $('constValue');
 
 //When values are entered in the constant input box, the draggable 
 //representation reflect those changes.
-constVal.onkeyup=function(){
-    selConst.set('html', constVal.value);
+constVal.onkeyup = function(){
+    selConst.set('text', constVal.value);
     selConst.store('spec', constVal.value)
 };
 
+yearsAgoValue = $('yearsAgoValue');
+yearConstValue = $('yearConstValue'); 
+yearsAgo = $('yearsAgo');
+yearConst = $('yearConst')
+
+yearsAgo.store('spec', undefined);
+yearConst.store('spec', undefined);
+
+yearsAgoValue.onkeyup = function() {
+    var val = toNum(yearsAgoValue.value.trim());
+    if (val < 1 || isNaN(val)) {
+        yearsAgo.store('spec', undefined);
+        yearsAgo.set('text', 'x Years Ago');
+        return;
+    }
+    yearsAgo.store('spec', 'current_year - ' + val);
+    if (val === 1)
+        yearsAgo.set('text', 'Last Year');
+    else
+        yearsAgo.set('text', val + ' Years Ago');
+}
+
+yearConstValue.onkeyup = function() {
+    var val = toNum(yearConstValue.value.trim());
+    if (val < 1 || isNaN(val)) {
+        yearConst.store('spec', undefined);
+        yearConst.set('text', 'Year x');
+        return;
+    }
+    yearConst.store('spec', val);
+    yearConst.set('text', 'Year ' + val);
+}
+    
+
 //Sets onclicks for the options buttons such that they show their respective selector views.
-$('identSpec').onclick=function(){showChoices('identSelect', true)};
-$('opSpec').onclick=function(){showChoices('opSelect', true)};
-$('compSpec').onclick=function(){showChoices('compSelect', true)};
-$('valueSpec').onclick=function(){showChoices('valueSelect', true)};
+$('itemShow').onclick=function(){showChoices('itemSelect')};
+$('fieldShow').onclick=function(){showChoices('fieldSelect')};
+$('yearShow').onclick=function(){showChoices('yearSelect')};
+$('setShow').onclick=function(){showChoices('setSelect')};
+$('opShow').onclick=function(){showChoices('opSelect')};
+$('compShow').onclick=function(){showChoices('compSelect')};
+$('valueShow').onclick=function(){showChoices('valueSelect')};
 
 //Sets onclick for the condition button so that it shows the condition sandbox
 var condSelect = $('condSelect');
-$('condSpec').onclick=function() {
+$('condShow').onclick=function() {
     if (condSelect.style.display == 'none')
         condSelect.style.display = '';
     else
         condSelect.style.display = 'none';
 };
 
-//Initializes a searchable select box for variables and conditions
-varSel = new VarSelect($('varBox'));
-varSel.title.set('html', 'Variables');
+//TODO: combine these onclicks
+//Sets onclick for the member button so that it shows member options
+var curMembers = $('curMembers');
+var memberSelect = $('memberSelect');
+$('memberShow').onclick=function() {
+    if (memberSelect.style.display == 'none') {
+        memberSelect.style.display = '';
+        eachSelect.style.display = 'none';
+        clearFor('each');
+    } else {
+        memberSelect.style.display = 'none';
+        clearFor('members')
+    }
+};
 
-condSel = new VarSelect($('condBox'));
-condSel.title.set('html', 'Conditions')
+//Sets onclick for the member button so that it shows member options
+var curEach = $('curEach');
+var eachSelect = $('eachSelect');
+$('eachShow').onclick=function() {
+    if (eachSelect.style.display == 'none') {
+        eachSelect.style.display = '';
+        memberSelect.style.display = 'none';
+        clearFor('members')
+    } else {
+        memberSelect.style.display = 'none';
+        clearFor('each');
+    }
+};
+
+
+//Initializes a searchable select box for variables and conditions
+valueSel = new VarSelect($('valueBox'));
+valueSel.title.set('html', 'Variables');
+
+conditionSel = new VarSelect($('condBox'));
+conditionSel.title.set('html', 'Conditions');
 
 itemSel = new VarSelect($('itemBox'));
-itemSel.title.set('html', 'Items')
+itemSel.title.set('html', 'Items');
+
+fieldSel = new VarSelect($('fieldBox'));
+fieldSel.title.set('html', 'Fields');
+
+//initializes the field selector by adding values
+function initFields(fields) {
+    for (var i = 0; i < fields.length; i++) {
+        listDraggable(fieldSel.addOption(fields[i]), 'field', 'field');
+    }
+}
+
+initFields(uniqueFields);
 
 date = new Date();
 curView = '';
@@ -262,18 +431,20 @@ function toNum(numStr){
   if clear is true, and  also does some special handling for 
   the various cases. 
 */
-function showChoices(toShow, clear){
+function showChoices(toShow, div){
+    if (!div)
+        div = 'choices';
     switch(toShow) {
         case 'comparator': toShow = 'compSelect'; break;
         case 'value': toShow = 'valueSelect'; break;
         case 'operator': toShow = 'opSelect'; break;
-        case 'identifier': toShow = 'identSelect'; break;
+        case 'item': toShow = 'itemSelect'; break;
     }
     //if we're already in a given view, do nothing
     if (toShow == curView)
         return
     curView = toShow;
-    var children = $$($('choices')).getChildren('div');
+    var children = $(div).getChildren('div');
     for (var i = 0; i < children.length; i++) { //>
         children[i].setStyle('display','none');
     }
@@ -287,12 +458,11 @@ function showChoices(toShow, clear){
    JSON translation */
 function capCondition() {
     if (validSemantics(curCond)) {
-        var children = curCond.childNodes;
-        var spec = [];
-        //We start i from 1 to skip the initial 'text' child. Possibly bad practice
-        for (var i = 1; i < children.length; i++) {
-            spec[i-1] = {type:children[i].type, spec: children[i].retrieve('spec'), html: children[i].innerHTML};
-        }
+        var children = curCond.getChildren();
+        var spec = new Array();
+        children.each(function(child) {
+            spec.push({type:child.retrieve('type'), spec: child.retrieve('spec'), html: child.innerHTML});
+        });
         return spec;
     }
     return null;
@@ -321,40 +491,73 @@ function validValue(value) {
     return true;
 };
 
-//Arrays may be overkill for this
-nouns =new Array('value', 'item');
-verbs = new Array('operator', 'comparator');
-ordering = {operator: nouns, value: verbs, item: verbs, condition: new Array("item"), comparator: nouns};
+nouns =new Array('value', 'item', 'field');
+verbs = new Array('operator', 'comparator', 'nothing');
+ordering = {operator: nouns, value: verbs, item: verbs, field:verbs, comparator: nouns};
 
 /*Determines if the current rule following some basic semantics.  As of now, operators and comparators
-  can only follow nouns, nouns cannot follow eachother, and conditions must follow items (subject to change). 
-  There must be exactly one comparator in a rule, outside of conditions. (right now, rules that are 'both 
+  can only follow nouns, nouns cannot follow eachother, and fields must have at least one item coming 
+  before (they are assumed to use that items specifiers if not attached to a particular item). 
+  There must be exactly one comparator in a rule. (right now, rules that are 'both 
   less than x and greater than y' are not supported, but could easily be added). There must be at least
-  one budget item. Rules must end in a noun*/
+  one budget item. Rules must end in a noun. Assignments are only valid after a single item.
+
+  This function also handles condition, although conditions have some slight differences. Items in 
+  conditions are replaced with fields, and some rules, such as fields having to follow an item, do  
+  not apply. */
 function validSemantics(compList) {
-    var components = compList.childNodes;
+    var cond = (compList === curCond);
+    var components = compList.getChildren();
     var prevType = 'nothing';
     var cmpCount = 0;
     var itemCount = 0;
-    //As in other places, child node 0 is a text field
-    for (var i = 1; i < components.length; i++) {
+    var afterComparator = false;
+    var afterCount = 0;
+    for (var i = 0; i < components.length; i++) {
+        if (afterComparator)
+            afterCount++;
+
         var component = components[i];
-        var type = component.type;
+        var type = component.retrieve('type');
         //Variables need to be translated to their actual types. 
         if (type == 'variable') 
             type = variables[component.retrieve('spec')].type;
 
         /* Special handling for a few cases. Right now just increments counters */
         switch(type) {
-        case 'comperator':
+        case 'comparator':
+            if (component.retrieve('spec') === '=') {
+                if (cond) {
+                    displayError('Assignments not allowed in conditions');
+                    return false;
+                }
+                if (!curRule.hasClass('members')) {
+                    displayError('Assignments are only allowed in member rules');
+                    return false;
+                }
+                if (itemCount !== 1 && i != 2) {
+                    displayError('Assignments must follow immediately follow single item');
+                    return false;
+                }
+            }              
+            afterComparator = true;
             cmpCount++;
             break;
+
         case 'item':
             itemCount++;
             break;
+
+        case 'field':
+            itemCount++;
+            /*
+            else if (itemCount === 0) {
+                displayError('Error at Component' + i + ': Stand-alone fields may only be used in a rule following an item, and are assumed to take that items specifiers');
+                return false;
+            }*/
         }
+
         //The rest of the code in the function just prints various error messages
-        //TODO: Use error area
         if (!ordering[type].contains(prevType)) {
             errMsg = 'Error at Component ' + i + ': ' + type +'s may only follow components of the type ' + ordering[type].join(', ') + '. Currently the component follows ' + prevType + '.';
             displayError(errMsg);
@@ -363,33 +566,76 @@ function validSemantics(compList) {
         prevType = type;
     }
     if (cmpCount != 1) {
-        errMsg = 'There must be exactly one comparator or assignment in the rule. Currently there are ' + cmpCount + '.';
+        if (cond) 
+            errMsg = 'There must be exactly one comparator in the condition. Currently there are ' + cmpCount + '.';
+        else
+            errMsg = 'There must be exactly one comparator or assignment in the rule. Currently there are ' + cmpCount + '.';
         displayError(errMsg);
         return false;
     }
     if (itemCount < 1) {
-        errMsg = 'There must be at least one budget item in the rule.';
+        if (cond) 
+            errMsg = 'There must be at least one field in the condition.';
+        else
+            errMsg = 'There must be at least one budget item in the rule.';
         displayError(errMsg);
         return false;
     }
-    return true;
-        
+    if (!nouns.contains(type)) {
+        if (cond)
+            errMsg = 'Conditions cannot end in operators or comparators';
+        else
+            errMsg = 'Rules cannot end in operators, comparators or assignments';
+        displayError(errMsg);
+        return false;
+    }
+    return true;        
 }
 
-//TODO: The name is a bit of a misnomer
+/* Adds a mouseover animation to elements */
+//WARNING: bit hacky on mouseleave
+function addHover(element) {
+    element.addEvents({
+        'mouseenter': function(event){
+            event.stop();
+            element.addClass('hovered');
+            element.getParent().removeClass('hovered');
+        },
+        'mouseleave': function(event){
+            event.stop();
+            //TODO: fix parent not rehighlight
+            element.removeClass('hovered');
+        }
+    });
+}
+
+//WARNING: The name is a bit of a misnomer as it does not clone all storage
 /* Clones draggable objects while retaining the stored specifications, so
-   that they may be read in again when forming the JSON */
+   that they may be read in again when forming the JS/JSON. Also reattaches
+   hover events. */
 function cloneWithStorage(element) {
     var clone = element.clone();
     clone.store('spec', element.retrieve('spec'));
+    clone.store('type', element.retrieve('type'));
+    addHover(clone);
     return clone;
 }
 
-/* A kind of hacky way of reading the CSS such that we can size components
-   for various drag and drop niceties */
-var sampleComp = $$('.draggable')[0]
-var compHeight = sampleComp.getStyle('height').toInt();
-var compWidth = sampleComp.getStyle('width').toInt() + sampleComp.getStyle('margin-right').toInt()*2;
+
+function destroyOutside(element, container) {
+    var ret = false;
+    var position = element.getPosition(container);
+    var containerDims = container.getSize();
+    var compDims = container.getSize();
+    if (position.y < -30-compDims.y || position.y > (containerDims.y + 30) || position.x < -30-compDims.x || position.x > (containerDims.x + 30)) {
+        ret = true;
+        /* This destroys the clone, not the actual element. We need to handle element
+           deletion at the oncomplete */
+        element.destroy()
+    }
+    return ret;
+}
+    
 
 /* Makes a list of components (right now either the rule or a condition) a mootools
    Sortable so that the components in them can be dragged around and ordered. 
@@ -411,15 +657,7 @@ function makeSortable(list) {
             /* When an component in the sortable is dropped sufficiently far away from the container,
                we want to destroy it. */
             onDrop: function(element) {
-                destroyIt = false;
-                var container = list;
-                var position = element.getPosition(container);
-                if (position.y < -30-compHeight || position.y > (container.getSize().y + 30) || position.x < -30-compHeight || position.x > (container.getSize().x + 30)) {
-                    destroyIt = true;
-                    /* This destroys the clone, not the actual element. We need to handle element
-                       deletion at the oncomplete */
-                    element.destroy()
-                }
+                destroyIt = destroyOutside(element, list);
             }
         },
         onComplete: function(element) {
@@ -431,15 +669,13 @@ function makeSortable(list) {
             } 
             //If our click was less than clicktime, then we register a click, and see if we can edit the component
             else if(date.getTime() - clickStart < CLICKTIME) {
-                if (element.get('type') == 'variable')
-                    editVariable(element.get('html'));
+                if (element.retrieve('type') == 'variable')
+                    editVariable(element.retrieve('spec'));
                 //TODO: We need to decide if we want changes in the sandbox to be persistent
-                if (element.get('type') == 'condition') 
-                    editCondition(element.retrieve('spec'));
-                if (element.get('type') == 'item') 
+                if (element.retrieve('type') == 'item') 
                     editItem(element.retrieve('spec'));
             }
-        }
+        },
     });
 }
 
@@ -450,52 +686,18 @@ var curCond = $('curCond');
 makeSortable(curRule);
 makeSortable(curCond);
 
+/*
 curRule.makeResizable({
     modifiers:{x: 'width', y:false}
 });
 curCond.makeResizable({
     modifiers:{x: 'width', y:false}
-});
+});*/
 
 
 
-newCondNameBox = $('newCondName');
+newConditionNameBox = $('newConditionName');
 
-//TODO: Much of this code is very similar to create variable. Consider folding
-function createCondition() {
-    var condName = newCondNameBox.value.trim();
-    
-    if (condName in variables && !variables[condName].type == 'condition') {
-        displayError('Name in use as ' + variables[condName].type);
-        return;
-    }
-
-    if (condName == '') {
-        displayError('Condition name must not be empty');
-        return;
-    }
-
-    var condSpec = capCondition();
-    if (condSpec == null) 
-        return;
-    
-
-    if (!(condName in variables)) {
-        //create the variable and make it's representative option draggable
-        listDraggable(condSel.addOption(condName));
-    }
-    variables[condName] = {type: 'condition',
-                           spec: condSpec,
-                           html: condName};
-
-    newCondNameBox.value = '';
-}
-
-/* Creates conditions upon pressing enter while the condition name box is in focus*/
-newCondNameBox.addEvent('keydown', function(event){
-    if (event.key == 'enter') 
-        createCondition();
-});
 
 
 /* Clears a sandbox */
@@ -503,60 +705,77 @@ function clearCompList(compList) {
     $$(compList).getChildren().each(function(element){element.destroy()});
 }
 
-/* Opens a condition for editting. Takes either a condition name or a condition spec
-   and composes it in the condition sandbox, and makes the sandbox viewable if it isn't
-   already*/
-function editCondition(cond) {
-    var condSpec; 
+//TODO: type and class are like the same
 
-    clearCompList(curCond);
-    if (typeOf(cond) == 'string') {
-        condSpec = variables[cond].spec;
-        newCondNameBox.value = cond;
-    } else {
-        condSpec = cond;
+/* Given an array of objects with the fields type, html, spec, and ch, regenerates
+   the draggable components and returns them in an array */
+function regenerateItems(specList) {
+    var components = new Array();    
+    for (var i = 0; i < specList.length; i++) {
+        var compSpec = specList[i];
+        var text = compSpec.html;
+        var comp = new Element('li', {class:'draggable', html:text});
+        var type = compSpec.type;
+        var dragClass = type;
+
+        if (type === 'variable') {
+            comp.onclick = function() {editVariable(text)};
+            dragClass = variables[text].type
+        }
+
+        comp.store('spec', compSpec.spec)
+        comp.store('type', type)
+        comp.addClass(dragClass);
+        if ('ch' in compSpec) {
+            var modifiers = regenerateItems(compSpec.ch);
+            modifiers.each(function(mod) {
+                mod.inject(comp);
+            });
+        }                          
+        components.push(comp);
     }
+    return components;
+}
 
-    for (var i = 0; i < condSpec.length; i++) {
-        comp = new Element('li', {class:'draggable', type:condSpec[i].type, html:condSpec[i].html});
-        comp.store('spec', condSpec[i].spec)
+/* Opens a condition for editting. Takes  a condition spec and composes it in
+   the condition sandbox, and makes the sandbox viewable if it isn't
+   already*/
+function editCondition(condSpec) {
+    clearCompList(curCond);
+
+    var components = regenerateItems(condSpec);
+    components.each(function (comp) {
         curCond.adopt(comp);
         curCond.sortable.addItems(comp);
-    }
+    });
 
     condSelect.style.display = '';
 }   
-    
-/* Deletes a condition with the name typed in the variable box. Does not cross variable type.
-   TODO: Potentially will not allow deletion of variables currently in use.
-   TODO: very similar to deleteVariable. Consider folding
-*/
-function deleteCondition() {
-    var condName = newCondNameBox.value.trim();
-    if (!condName in variables) {
-        displayError('Condition does not exist');
-    } else if (!variables[condName].type == 'condition') {
-        displayError('Name in use as ' + variables[condName].type + ', cannot delete as condition.');
-        return;
-    } else {
-        condSel.removeOption(condName);
-        delete variables[condName];
-    }
-}
+   
 
+newValueNameBox = $('newValueName');
+newValueAmtBox = $('newValueAmt');
 
-newVarNameBox = $('newVarName');
-newVarAmtBox = $('newVarValue');
+newItemNameBox = $('newItemName');
+
+//TODO: variables named <script> don't work
+
+function makeSafe(text) {
+  return text.replace(/\W/g, function (chr) {
+    return '&#' + chr.charCodeAt(0) + ';';
+  });
+};
+
+itemVar = $('itemVar');
 
 /*Creates a variable for rule use. Rejects empty variable names
   and non-number values. Assigning a variable twice overwrites
   the previous value
 */
-function createVariable() {
-    var variableName = newVarNameBox.value.trim();
-    var variableAmt = toNum(newVarAmtBox.value);
+function createVariable(type) {
+    var variableName = makeSafe(window['new' + type.capitalize() + 'NameBox'].value.trim());
     
-    if (variableName in variables && !variables[variableName].type == 'value') {
+    if (variableName in variables && variables[variableName].type !== type) {
         displayError('Name in use as ' + variables[variableName].type);
         return;
     }
@@ -565,36 +784,74 @@ function createVariable() {
         displayError('Variable name must not be empty');
         return;
     }
-     
-    if (isNaN(variableAmt)) {
-        displayError('Variable must have a valid numeric amount');
-        return;
+    
+    var spec;
+
+    switch(type) {
+    case 'value':
+        spec = toNum(newValueAmtBox.value);
+        if (isNaN(spec)) {
+            displayError('Variable must have a valid numeric amount');
+            return;
+        }
+        newValueAmtBox.value = '';  
+        break;
+    case 'item': 
+        /*
+        var flags = {};
+        spec = getSelectedItem(flags);
+        if ('each' in flags) {
+            displayError('-EACH- identifiers are not allowed in variables');
+            return false;
+        }
+        if ('this' in flags) {
+            displayError('-THIS- identifiers are not allowed in variables');
+            return false;
+        }*/
+        var item = itemVar.getChildren()[0];
+        if (item) 
+            spec = item.retrieve('spec');
+        else {
+            displayError('An item must be specified in order to save a variable');
+            return;
+        }            
+        break;
+    case 'condition':
+        spec = capCondition();
+        if (spec == null) 
+            return;
+        break;
     }
 
     if (!(variableName in variables)) {
         //create the variable and make it's representative option draggable
-        listDraggable(varSel.addOption(variableName));
+        listDraggable(window[type + 'Sel'].addOption(variableName), type);
     }
-    variables[variableName] = {type: 'value',
-                               spec: variableAmt,
+    variables[variableName] = {type: type,
+                               spec: spec,
                                html: variableName};
 
-    newVarNameBox.value = '';
-    newVarAmtBox.value = '';  
+    window['new' + type.capitalize() + 'NameBox'].value = '';
 }
+
+/* Creates conditions upon pressing enter while the condition name box is in focus*/
+newConditionNameBox.addEvent('keydown', function(event){
+    if (event.key == 'enter') 
+        createVariable('condition');
+});
 
 /* Deletes a variable with the name typed in the variable box. Does not cross variable type.
    TODO: Potentially will not allow deletion of variables currently in use.
 */
-function deleteVariable() {
-    var variableName = newVarNameBox.value.trim();
+function deleteVariable(type) {
+    var variableName = window['new' + type.capitalize() + 'NameBox'].value.trim();
     if (!variableName in variables) {
         displayError('Variable does not exist');
     } else if (!variables[variableName].type == 'value') {
-        displayError('Name in use as ' + variables[variableName].type + ', cannot delete as value.');
+        displayError('Name in use as ' + variables[variableName].type + ', cannot delete as ' + type + '.');
         return;
     } else {
-        varSel.removeOption(variableName);
+        window[type + 'Sel'].removeOption(variableName);
         delete variables[variableName];
     }
 }
@@ -602,15 +859,15 @@ function deleteVariable() {
 
 /* Adds on enter-key behavior the the variable name and
    value boxes such that it creates a variable */
-newVarNameBox.addEvent('keydown', function(event){
+newValueNameBox.addEvent('keydown', function(event){
     if (event.key == 'enter') 
-        createVariable();
+        createVariable('value');
 });
 
-newVarAmtBox.addEvent('keydown', function(event){
+newValueAmtBox.addEvent('keydown', function(event){
     if (event.key == 'enter')  {
-        createVariable();
-        newVarNameBox.focus();
+        createVariable('value');
+        newValueNameBox.focus();
     }
 });
 
@@ -620,41 +877,192 @@ newVarAmtBox.addEvent('keydown', function(event){
 function editVariable(variableName) {
     var type = variables[variableName].type;
     if (type == 'condition') {
-        editCondition(variableName);
+        newConditionNameBox.value = variableName;
+        editCondition(variables[variableName].spec);
+        condSelect.style.display = '';
     } else if (type == 'item') {
         editItem(variables[variableName].spec);
+        newItemNameBox.value = variableName;
+        showChoices('itemSelect');
     } else if (type == 'value') {
         //This is kind of poor form, as it relies on value being
         //undefined to filter out bad clicks
-        $('newVarName').value = variableName;
-        $('newVarValue').value = variables[variableName].spec;
-        showChoices('valueSelect', false);
+        newValueNameBox.value = variableName;
+        newValueAmtBox.value = variables[variableName].spec;
+        showChoices('valueSelect');
     }
 }           
 
+function switchVar(comp, type) {
+    var cur = window[type + 'Var'];
+    clearCompList(cur);
+    var cl = cloneWithStorage(comp);
+    cl.inject(cur);
+    addModDrag(cur, cl);
+}
+
+function clearFor(type) {
+    clearCompList(window['cur' + type.capitalize()]);
+    curRule.removeClass(type);
+    //We want to destroy every draggable item with a this specifier, as they won't probably apply anymore
+    var thisItems = document.getElements('.this');
+    if (thisItems)
+        thisItems.destroy();
+}
+
+
+/* Switches the current active member for member rules with the one specified in the argument */
+function switchSpecial(comp, type) {
+    clearFor(type);
+    //Add member class to curRule
+    curRule.addClass(type);
+    var cur = window['cur' + type.capitalize()];
+    //Add visual
+    var cl = cloneWithStorage(comp);
+    cl.inject(cur);
+    cl.removeClass('item');
+    cl.addClass(type)
+    addModDrag(cur, cl);
+    
+    var spec = comp.retrieve('spec');
+    var dataSet = getFirstKey(spec);
+    spec = spec[dataSet];
+
+//TODO: This code isn't really readable
+
+    var injectToDropDown = function(specArray, key, leaf) {
+        var id = '';
+        specArray.each(function(ident) {
+            id += ident;
+        });
+        var injectThisIdent = function(item) {
+            var dset = getFirstKey(item.retrieve('spec'));
+            var spec = {};
+            var spoint = (spec[dset] = {}); 
+            for (var i = 0; i < specArray.length; i++) {
+                spoint = (spoint[specArray[i]] = {});
+            }
+            //TODO: each. Again, current handling could be much cleaner
+            spoint[key] = {};
+            var li = createDropDownItem(spec, 'val' + dset + id + key, key, leaf);
+            var parentMenu = item.getChildren('ul.dropMenu')[0];
+            if (!parentMenu) {
+                var ul = Element('ul', { 'class': 'dropMenu' });
+                ul.inject(item);
+                parentMenu = ul;
+            }
+            li.inject(parentMenu, 'top');
+            li.setStyle('display', 'block');
+        }
+        for (dataset in categories) {
+            if (!hasOwnProperty.call(categories, dataset))
+                continue;
+            var parentItem = $('val' + dataset + id);
+            if (parentItem)
+                injectThisIdent(parentItem);
+        }
+    }
+
+    //TOOO: department, fund, etc shouldn't be draggable
+    if (type === 'each') {
+        var eachRecurseCheck = function(value, key, specArray, identHier, identIndex) {
+            if (key.substring(0,7) === '-EACH- ') {
+                while (true) {
+                    var leaf = isEmpty(value)
+                    var thiskey = '-THIS- ' + identHier[identIndex];
+                    injectToDropDown(specArray, thiskey, leaf);
+                    specArray.push(thiskey);
+                    identIndex++;
+                    if (leaf)
+                        break;
+                    value = value[getFirstKey(value)];
+                }                 
+            } else {
+                var newSpecArray = specArray.clone();
+                newSpecArray.push(key);
+                Object.each(value, function(value, key) {
+                    eachRecurseCheck(value, key, newSpecArray, identHier, identIndex + 1)
+                });
+            }
+        }
+
+        Object.each(spec, function(value, identifier) {
+            eachRecurseCheck(value, identifier, new Array(), identHierarchy[identifier], -1);
+        });
+    }
+    
+    /*We want to add a this specifier to the highest unspecified level*/
+    if (type === 'members') {
+        var membersRecurseCheck = function(value, key, specArray, identHier, identIndex) {
+            if (isEmpty(value) && specArray.length !== 1) {
+                for (var i = identIndex; i < identHier.length; i++) {
+                    var leaf = (i === (identHier.length-1))
+                    var thiskey = '-THIS- ' + identHier[i];
+                    injectToDropDown(specArray, thiskey, leaf);
+                    specArray.push(thiskey);
+                }                    
+            } else {
+                Object.each(value, function(value, key) {
+                    var newSpecArray = specArray.clone(); 
+                    newSpecArray.push(key);
+                    membersRecurseCheck(value, key, newSpecArray, identHier, identIndex + 1)
+                });
+            }
+        }
+        Object.each(spec, function(value, identifier) {
+            var identHier = identHierarchy[identifier];
+            tempSpecArray = new Array(identifier); 
+            for (var i = 0; i < identHier.length; i++) {
+                var leaf = (i === (identHier.length-1))
+                var thiskey = '-THIS- ' + identHier[i];
+                injectToDropDown(tempSpecArray, thiskey, leaf);
+                tempSpecArray.push(thiskey);
+            }                
+            membersRecurseCheck(value, identifier, new Array(identifier), identHier, 0);
+        });
+    }           
+}
+
+
+
 /* Makes it such that you can grab the options in a variable list and they turn into components
-   for a rule or condition. Defines a seperate clicking and dragging behavior based on click duration */
-function listDraggable(elem){
+   for a rule or condition. Defines a seperate clicking and dragging behavior based on click duration.
+   Optional argument dragClassOverride allows a css class to be added the element, giving it different behaviors.
+   Optional argument typeOverride allows the type variable to be overridden in favor of another type
+   Optional argument specOverride allows the spec of the variable to be overridden. 
+   Optional mouseUp override allows the click functionality to be changed*/
+function listDraggable(elem, dragClassOverride, typeOverride, specOverride, mouseUpOverride){
     var timeout;
     var fired;
     var varName;
+    var dragClass = dragClassOverride ? dragClassOverride : 'value';
+    var type = typeOverride ? typeOverride : 'variable';
+    var varName = elem.get('text');
+    var spec = specOverride ? specOverride : varName;
+    var mouseUp = mouseUpOverride ? mouseUpOverride : function () {
+            elem.set('selected', true);
+            editVariable(varName);
+    };
     elem.addEvent('mousedown', function(event){
         event.stop();
-        varName = this.get('html');
         fired = false;
         timeout = setTimeout(function() {
             fired = true;
-            var comp = new Element('li', {class:'draggable',
-                                          type: 'variable', 
-                                          html: varName});
-            comp.store('test', 30);
+            var comp = new Element('span', {class:'draggable',
+                                            html: varName,
+                                           });
+            comp.addClass(dragClass);
+            comp.store('type', type);
+            comp.store('spec', spec);
             var clone = comp.clone().setStyles({
                 opacity: 0.7,
                 position: 'absolute',
-                left: event.page.x-compWidth/2,
-                top: event.page.y-compHeight/2
             }).inject(document.body);
-            
+            var compDims = clone.getSize();
+            clone.setStyles({
+                left: event.page.x-compDims.x/2,
+                top: event.page.y-compDims.y/2,
+            });
             addDrag(clone, comp, event);
         }, CLICKTIME);
     });
@@ -662,8 +1070,7 @@ function listDraggable(elem){
         window.clearTimeout(timeout);
         //If the timeout hasn't fired we count it as a click
         if (!fired) {
-            this.set('selected', true);
-            editVariable(varName);
+            mouseUp();
         }
     });
 };
@@ -673,8 +1080,13 @@ function listDraggable(elem){
 window.addEvent('domready', function(){
     var timeout;
     var drgbs = $$('.draggable');
+    drgbs.each(function(drgb) {
+        addHover(drgb);
+    });
     drgbs.addEvent('mousedown', function(event){
         event.stop();
+        
+        var text = this.get('text');
 
         /* If we're trying to drag a constant and it isn't valid, nothing should
            happen except for an error */
@@ -693,18 +1105,35 @@ window.addEvent('domready', function(){
 
        /* If we're trying to drag an item, we need to encapsulate the selected item
            in the component. */
-        if (this.get('id') == 'selectItem') {
-            var itemSpec = getSelectedItem();
+        if (this.hasClass('item')) {
+            var flags = {};
+            var itemSpec = getSelectedItem(flags, this.retrieve('dataset'));
             this.store('spec', itemSpec);
+            if ('each' in flags)
+                this.addClass('each');
+            if ('this' in flags)
+                this.addClass('this');
         }
 
+        if (this.hasClass('year')) {
+            if (this.retrieve('spec') === undefined) {
+                displayError('Years should be specified in terms of positive integers');
+                return;
+            }
+        }
+        
         // `this` refers to the element with the .draggable class
         var comp = this;
+               
+                
         //Drags are only registered after 100 ms, in order to allow for click behavior.
         timeout = setTimeout(function() {
-            var clone = comp.clone().setStyles(comp.getCoordinates()).setStyles({
+            var compDims = comp.getSize();
+            var clone = comp.clone().setStyles({
                 opacity: 0.7,
-                position: 'absolute'
+                position: 'absolute',
+                left: event.page.x-compDims.x/2,
+                top: event.page.y-compDims.y/2,
             }).inject(document.body);
 
             addDrag(clone, comp, event);
@@ -715,58 +1144,205 @@ window.addEvent('domready', function(){
     });
 });
 
+function addToRule(dragging, rule, comp) {
+    if (rule != null){
+        var cl = cloneWithStorage(comp);
+
+        var position = dragging.getPosition(rule);
+        /* We calculate at what index the component should be inserted based
+           on where it was dropped in the sandbox. Should already be an integer,
+           but just in case. As before element 0 is a text element so we add 1*/
+        //WARNING: POSSIBLY VERY INEFFECIENT
+        var widthSoFar = 40;
+        var middlePos = position.x + comp.getSize().x/2;
+        var children = rule.getChildren();
+        var inserted = false;
+        for (var i = 0; i < children.length; i++) {
+            var childWidth = children[i].getSize().x;
+            widthSoFar += childWidth;
+            if (middlePos < widthSoFar - childWidth/2) {
+                cl.inject(children[i], 'before');
+                inserted = true;
+                break;
+            }
+        }
+        if (!inserted)
+            cl.inject(rule);
+
+        rule.sortable.addItems(cl);
+    }
+}
+
+function addModDrag(item, comp) {
+    var fired = false;
+    var to;
+    comp.addEvent('mousedown', function(event){
+        event.stop();
+        fired = false;
+        to = setTimeout(function() {
+            fired = true;
+            var clone = comp.clone().setStyles(comp.getCoordinates()).setStyles({
+                opacity: 0.7,
+                position: 'absolute'
+            }).inject(document.body);
+            
+            var destroyIt;
+            var clickStart;
+            var modDrag = new Drag.Move(clone, {
+                onDrop: function(element) {
+                    destroyIt = destroyOutside(element, item);
+                },
+                onComplete: function(element) {
+                    if (destroyIt) {
+                        if (comp.retrieve('type') === 'item') {
+                            if (comp.getParent() === curMembers) 
+                                clearFor('members');
+                            if (comp.getParent() === curEach)
+                                clearFor('each');
+                        }
+                        comp.destroy();
+                    }
+
+                    if (element) 
+                        element.destroy();
+                },
+                onCancel: function(element){
+                    element.destroy();
+                },
+            });
+            modDrag.start(event);
+        }, CLICKTIME);
+    });
+    comp.addEvent('mouseup', function(event){
+        window.clearTimeout(to);
+        //If the timeout hasn't fired we count it as a click
+        type = comp.retrieve('type');
+        if (!fired) {
+            if (type == 'variable')
+                editVariable(comp.retrieve('spec'));
+            else if (type =='condition')
+                editCondition(comp.retrieve('spec'));
+            //This is only for the member rule box
+            else if (type === 'item')
+                editItem(comp.retrieve('spec'));
+        }
+    });
+}
+
+/*Type is either 'field' to denote a regular field or 'year' to denote
+  a time field */
+function addField(item, field, type) {
+    //Remove old field, if any
+    var oldField = item.getChildren('.draggable.mod.'+type)
+    if(oldField)
+        oldField.destroy();
+    //Add visual
+    var cl = cloneWithStorage(field).addClass('mod');
+    cl.inject(item);
+    cl.setStyle('position', 'static');
+    addModDrag(item, cl);
+}
+
+function addCond(item, cond) {
+    //add visual
+    var cl = cloneWithStorage(cond).addClass('mod');
+    cl.inject(item);
+    cl.setStyle('position', 'static');
+    addModDrag(item, cl);
+}
+
+//TODO: Typing
+
 /* Specifies the drag behavior of the components. */
 function addDrag(clone, comp, event) {
+    var dragFunc = null;
+
+    //TODO: Make this a switch
+    var std = (comp.hasClass('comparator') || comp.hasClass('value') || comp.hasClass('operator') );
+    var cond = (comp.hasClass('condition'));
+    var field = (comp.hasClass('field'));
+    var year = (comp.hasClass('year'));
+    var item = (comp.hasClass('item'));
+    var setOp = (comp.hasClass('set'));
+    var drops = [];
+    if (std) {
+        drops = [curRule, curCond];
+    } else if (item) {
+        if (comp.hasClass('each'))
+            drops = [curEach];
+        else if (comp.hasClass('this'))
+            drops = [curRule];
+        else              
+            drops = [curRule, curMembers, itemVar];
+    } else if (cond || year || setOp) {
+        drops = $$('.draggable.item');
+        if (cond)
+            drops.combine($$('.draggable.members'));
+        if (year)
+            drops.combine($$('.draggable.field'));
+    } else if (field) {
+        drops = drops.include(curCond).include(curRule).combine($$('.draggable.item'));
+    }
+
     var drag = new Drag.Move(clone, {
+        
+        droppables: drops,
 
-        droppables: [curRule, curCond],
-
-        onDrop: function(dragging, rule){
-            /* If we drop into a sandbox, we clone the component and add it
-               to the sandbox */
-            if (rule != null){
-                var cl = cloneWithStorage(comp);
-
-                var position = dragging.getPosition(rule);
-                /* We calculate at what index the component should be inserted based
-                   on where it was dropped in the sandbox. Should already be an integer,
-                   but just in case. As before element 0 is a text element so we add 1*/
-                var index = (((position.x-40)/compWidth)+1).toInt()+1;
-                if (index < 0)
-                    index = 0;
-                var children = rule.childNodes;
-                if (children.length <= index)
-                    cl.inject(rule);
-                else 
-                    cl.inject(children[index], 'before');
-
-                rule.sortable.addItems(cl);
-                
-                rule.highlight('#7389AE', '#FFF');
+        onDrop: function(dragging, drop){
+            if (drop) {
+                drop.removeClass('highlight');
+                //These ifs pertain to adding modifiers to items
+                if (cond) 
+                    addCond(drop, comp);
+                else if (year) 
+                    addField(drop, comp, 'year');
+                else if (setOp)
+                    addField(drop, comp, 'set');
+                else if (field && drop.hasClass('item')) {
+                    addField(drop, comp, 'field');
+                /*If we drop an item into the member sandbox, we make that
+                  item the current active member */
+                } else if (drop === curMembers) {
+                    switchSpecial(comp, 'members');
+                /*If we drop an item into the each sandbox, we make that
+                  item the current active each */
+                } else if (drop === curEach) {
+                    switchSpecial(comp, 'each');
+                } else if (drop === itemVar) {
+                    switchVar(comp, 'item');
+                    /* Lastly, if we drop into a sandbox, we clone the component and add it
+                       to the sandbox */
+                } else if (std || field || item) {
+                    addToRule(dragging, drop, comp);
+                }
             }
             dragging.destroy();
         },
-        onEnter: function(dragging, rule){
-            rule.tween('background-color', '#98B5C1');
+        onEnter: function(dragging, drop){
+            drop.addClass('highlight')
         },
-        onLeave: function(dragging, rule){
-            rule.tween('background-color', '#FFF');
+        onLeave: function(dragging, drop){
+            drop.removeClass('highlight')
         },
         onCancel: function(dragging){
             dragging.destroy();
         }
     });
-    drag.start(event);
+    //if (comp.hasClass('std')) {
+    
+drag.start(event);
 }
 
 //Dropdowns code
 
 dropContainer = $('dropdowns');
 
-heirarchy = {funds:['superfund', 'fund', 'subfund'], departments:['department', 'division'], categories:['ledger type', 'ledger description']}
+identHierarchy = {funds:['superfund', 'fund'], departments:['department', 'division'], categories:['ledger_type', 'ledger_description']}
 
 //clears the item selector. Probably not the best way to do this
 function clearSelectedItems() {
+    dropContainer.getElements('.checkbox').each(clearCheck); 
+    /*
     var dropdowns = dropContainer.getChildren('span');
     dropdowns.each(function (dropdown) {
         var children = dropdown.getChildren('ul')[0].getChildren('li');
@@ -775,48 +1351,20 @@ function clearSelectedItems() {
             clearCheck(check);
             check.getSiblings('ul')[0].getElements('.checkbox').each(clearCheck); 
         });
-    });
+    });*/
 }
 
-newItemNameBox = $('newItemName');
 
-//TODO: Much of this code is very similar to create variable. Consider folding
-function createItem() {
-    var name = newItemNameBox.value.trim();
-    
-    if (name in variables && !variables[name].type == 'item') {
-        displayError('Name in use as ' + variables[name].type);
-        return;
-    }
-
-    if (name == '') {
-        displayError('Item name must not be empty');
-        return;
-    }
-
-    var spec = getSelectedItem();
-    
-
-    if (!(name in variables)) {
-        //create the variable and make it's representative option draggable
-        listDraggable(itemSel.addOption(name));
-    }
-    variables[name] = {type: 'item',
-                           spec: spec,
-                           html: name};
-
-    newItemNameBox.value = '';
-}
-
-/* Creates conditions upon pressing enter while the condition name box is in focus*/
-newCondNameBox.addEvent('keydown', function(event){
-    if (event.key == 'enter') 
-        createCondition();
+/* Creates items upon pressing enter while the item name box is in focus*/
+newItemNameBox.addEvent('keydown', function(event){
+    if (event.key === 'enter') 
+        createVariable('item');
 });
 
 // Speed up calls to hasOwnProperty
 var hasOwnProperty = Object.prototype.hasOwnProperty;
 
+//Returns true if the object is an empty object
 function isEmpty(obj) {
 
     // Assume if it has a length property with a non-zero value
@@ -830,6 +1378,8 @@ function isEmpty(obj) {
     return true;
 }
 
+/* Helper function, called recursively, for filling in checked boxes
+   based on an object */
 function editSel(obj, list) {
     list.each(function (listElem) {
         var label = listElem.getChildren('.dropLabel')[0];
@@ -838,15 +1388,22 @@ function editSel(obj, list) {
             if (!isEmpty(obj[name])) {
                 var children = listElem.getChildren('ul')[0].getChildren('li');
                 editSel(obj[name], children);
-            } else 
-                checkClick.apply(label.getSiblings('.checkbox')[0]);
+            } else {
+                var check = label.getSiblings('.checkbox')[0];
+                if (check) 
+                    checkClick.apply(check);
+            }
         }
     });
 }
 
+/* Given an object tree representing checked items in the dropdowns, checks those items */
 function editItem(obj) {
     clearSelectedItems();
     Object.each(obj, function(values, name) {
+        if (name == 'field' || name == 'conditions' || name == 'year')
+            return;
+
         if (!isEmpty(values)) {
             dropdown = $('dropdown'+name);
             var children = dropdown.getChildren('ul')[0].getChildren('li');
@@ -855,12 +1412,29 @@ function editItem(obj) {
     });
 }
 
-//Function that recursively examing the checked state of the item dropdown, checking items that should be selected
-function getItemSel(obj, list) {
+function getFirstKey(spec) {
+    for (key in spec) {
+        if (!hasOwnProperty.call(spec, key))
+            continue;
+        else 
+            return key;
+    }
+}
+
+/* Function that recursively examines the checked state of the item dropdown, placing selected
+  items in the given object. */
+function getItemSel(obj, list, flags) {
     list.each(function (listElem) {
         var check = listElem.getChildren('.checkbox')[0];
         if (check.hasClass('fullCheck') || check.hasClass('partialCheck')) {
             var name = check.getSiblings('.dropLabel')[0].get('text');
+            if (flags) {
+                var specialType = name.substring(0,7);
+                if (specialType === '-EACH-')
+                    flags['each'] = {};
+                if (specialType === '-THIS-')
+                    flags['each'] = {};
+            }
             obj[name] = {};
             if (check.hasClass('partialCheck')) {
                 var children = listElem.getChildren('ul')[0].getChildren('li');
@@ -871,27 +1445,39 @@ function getItemSel(obj, list) {
 }
 
 //Returns a javascript object representing the selections from the item selector
-function getSelectedItem() {
-    var dropdowns = dropContainer.getChildren('span');
+function getSelectedItem(flags, dataset) {
     var obj = {};
-    dropdowns.each(function (dropdown) {
-        var name = dropdown.retrieve('name');
-        obj[name] = {};
-        var children = dropdown.getChildren('ul')[0].getChildren('li');
-        getItemSel(obj[name], children);
+    var dropdown = $('dropdown' + dataset);
+    obj[dataset] = {};
+    var children = dropdown.getChildren('ul')[0].getChildren('li');
+    children.each(function (elem) {
+        var identType = elem.getChildren('.dropLabel')[0].get('text');
+        obj[dataset][identType] = {};
+        var list = elem.getChildren('ul')[0].getChildren('li');
+        getItemSel(obj[dataset][identType], list, flags);
     });
     return obj;
 }
 
-Object.each(uniqueCats, function (values, name) {
-    createDropDown(name, values);
+Object.each(categories, function (values, name) {
+    createDropDown(name);
 });
 
-function createDropDown(name, values) {
+itemConst = $('itemConst');
+
+/* Given a name and an object tree of options, generates a new dropdown menu with those
+   options */
+function createDropDown(name) {
     var dropdown = Element('span', {
         id: 'dropdown' + name
         , 'class': 'dropdown'
     }).store('name', name);
+
+    var draggableItem = Element('span', {
+        'class': 'draggable item',
+        'text': (name.capitalize() + ' item')
+    }).store('type', 'item').store('dataset', name);
+    draggableItem.inject(itemConst);
 
     //Consider: Special handling for a different display name;
     var text = Element('span', {
@@ -900,65 +1486,133 @@ function createDropDown(name, values) {
     });
 
     var showButton = Element('span', {'class': 'drop_button'});
-
+    
     var hierarchy = Element('ul', {
         'class': 'dropMenu rootDropMenu'
     });
-
+ 
     dropdown.appendChild(text);
     dropdown.appendChild(showButton);
     dropdown.appendChild(hierarchy);
 
     dropContainer.appendChild(dropdown);
 
-//    treeval[name] = [];
+    var dataSetCats = categories[name].hierarchy;
 
-    fillHierarchy(hierarchy, values, name, undefined, 0);
+    var specObj = {};
+    var specEnd = {};
+    specObj[name] = specEnd;
+    for (key in identHierarchy) {
+        //TODO: Should only have fields if they apply to the dataset.
+        if (!hasOwnProperty.call(identHierarchy, key))
+            continue;
+        specEnd[key] = {};
+    }
+        
+
+    Object.each(identHierarchy, function (values, key) {
+        var identHier = identHierarchy[key];
+        var hierTop = identHier[0];
+        if (hierTop in categories[name].hierarchy) {
+            var id = 'val'+name+key;
+            var li = createDropDownItem(specObj, id, key, false, true);
+            var ul = Element('ul', { 'class': 'dropMenu' });
+            li.appendChild(ul);
+            fillHierarchy(ul, dataSetCats[hierTop], specObj, specEnd[key], id, identHier, 0);
+            hierarchy.appendChild(li);
+        }
+    });
 }
 
-function fillHierarchy(level, values, tree, parent, depth) {
-    if (typeOf(values) === 'array') {
-        for (var i = 0; i < values.length; i++) {
-            var key = values[i];
-            var li     = Element('li', {'class': 'dropItem' ,// source' + source + ' tree' + tree, 
-                                        id:'val' + key,
-                                       });
-            var check  = Element('span', {'class': 'checkbox'});
-            var label  = Element('span', {'class': 'dropLabel', text: key});
-            li.appendChild(check);
-            li.appendChild(label);
-            level.appendChild(li);
-            clearCheck(check);
-        }
+
+// TODO: -EACH- Division is a misnomer when it's contained within a specific dept
+
+function createDropDownItem(specObj, id, key, leaf, nocheck) {
+    var li     = Element('li', {'class': 'dropItem' ,
+                                id:id
+                               });
+    var expand = Element('span', {'class': 'expand'});
+    var label  = Element('span', {'class': 'dropLabel', text: key});
+    li.appendChild(expand);
+    if (!nocheck) {
+        var check  = Element('span', {'class': 'checkbox'});
+        check.store('checked', false);
+        li.appendChild(check);
+        clearCheck(check);
     } else {
-        Object.each(values, function (values, key) {
-            
-            var li     = Element('li', {'class': 'dropItem' ,
-                                        id:'val' + key,
-                                       });
-            var check  = Element('span', {'class': 'checkbox'});
-            var expand = Element('span', {'class': 'expand'});
-            var label  = Element('span', {'class': 'dropLabel', text: key});
-            li.appendChild(expand);
-            li.appendChild(check);
-            li.appendChild(label);
+        li.addClass('nocheck');
+    }
+    li.appendChild(label);
+    if (key.substring(0, 7) === '-EACH- ') 
+        li.addClass('each');
+    if (key.substring(0,7) === '-THIS- ') 
+        li.addClass('this');
+    
+    var spec = Object.clone(specObj);
+    li.store('spec', spec);
+    //TODO: each. Again, current handling could be much cleaner
+    var modifier = '';
+    if (key.substring(0,7) === '-EACH- ')
+        modifier = ' each';
+    if (key.substring(0,7) === '-THIS- ')
+        modifier = ' this';
+    listDraggable(li, 'item' + modifier, 'item', spec, function(){return;});
+    if (leaf) {
+        expand.hide();
+    }
+    return li;
+}
+
+/* Fills our a dropdown hierarchically using a JSON object. Uses empty objects as leaf nodes. */
+function fillHierarchy(level, values, specObj, specEnd, id, identHier, identIndex) {
+//TODO: very few this identifiers make sense in most contexts
+    //TODO: kill items that have this as an identifier
+    if (typeOf(values) === 'array') {
+        values.include('-EACH- ' + identHier[identIndex]);
+        values.each(function(ident) {
+            specEnd[ident] = {}
+            var li = createDropDownItem(specObj, id + ident, ident, true);
+            delete specEnd[ident];
             level.appendChild(li);
+        });
+    } else if (typeOf(values) === 'object') {
+        var eachObj = {};
+        var epoint = eachObj;
+        for (var i = identIndex + 1; i < identHier.length; i++) {
+            var ident = identHier[i];
+            var eachident = ('-EACH- ' + ident);
+            var end = {}
+            epoint['_'] = {};
+            epoint['_'][ident] = {};
+            epoint['_'][ident][eachident] = end;
+            epoint = end;
+        }
+        values['-EACH- ' + identHier[identIndex]] = eachObj;
 
-            clearCheck(check);
-
-            if (values && values.length != 0) {
+        identIndex++;
+        Object.each(values, function fillListItem(values, key) {
+            specEnd[key] = {};
+            //If values is an array, the current item is a leaf node if that array is empty. If not, 
+            // it's empty if the object is empty.
+            var leaf = (typeOf(values) === 'array') ? (values.length === 0) : (isEmpty(values) || !values['_'] || !values['_'][identHier[identIndex]])
+            var li = createDropDownItem(specObj, id + key, key, leaf);
+            level.appendChild(li);
+            if (!leaf) {
                 var ul = Element('ul', { 'class': 'dropMenu' });
-                fillHierarchy(ul, values, tree, key, depth + 1);
+                fillHierarchy(ul, (values['_'][identHier[identIndex]]), specObj, specEnd[key], id + key, identHier, identIndex);
                 li.appendChild(ul);
-            } else {
-                expand.hide();
             }
+            delete specEnd[key];
         });
     }
 }
+               
 
-//Auto fold full and empty submenus
+//I never really investigated this function to know how it works
 function autoHide(context) {
+    //TODO: Float EACH options
+
+    //Auto fold full and empty submenus
     context.getElements('.fullCheck, .emptyCheck')
         .getSiblings('.expand')
         .each(function (el) { el.removeClass('visible') });
@@ -985,23 +1639,29 @@ function autoHide(context) {
     context.getElements('.dropItem.disabled').each(function (el) {
         el.getParent().appendChild(el);
     });
+    context.getElements('.dropItem.this').each(function (el) {
+        el.inject(el.getParent(), 'top');
+    });
 }
-
 //Check if an element has been clicked
 function isActive(el) {
     var checkbox = el.getElement('.checkbox');
     return !checkbox.hasClass('emptyCheck');
 }
 
-//Check parents as partial or full where appropriate
+/* Check parents as partial or full where appropriate. A partial check represents a
+   parent whose children are not all checked */
 function checkParents(el) {
+    var immune = new Array(el);
     el.getParents('ul.dropMenu').each(function (el) {
         var full  = true;
         var empty = true;
         el.getChildren('> li > .checkbox').each(function (child) {
             var checked = child.retrieve('checked');
             if (checked !== 'full') {
-                full = false;
+                var par = child.getParent();
+                if (!par.hasClass('each') && !par.hasClass('this'))
+                    full = false;
             }
             if (checked) {
                 empty = false;
@@ -1021,7 +1681,9 @@ function checkParents(el) {
     });
 }
 
-
+/* Helper function which clears a single check box. With this and the
+   functions below, do not use on there own most of the time. They will
+   not properly effect parents and children. Use variations on checkClick */
 function clearCheck(el) {
     el.store('checked', false);
     el.getParent().removeClass('checked');
@@ -1052,16 +1714,54 @@ function partialCheck(el) {
     el.removeClass('fullCheck');
 }
 
-
+/* Based on the status of a check box, changes it to the next state (partial or empty 
+   go to full, full goes to empty), and also appropriately changes parents and children.
+*/
 function checkClick() {
     if (this.hasClass('fullCheck')) {
         clearCheck(this);
         this.getSiblings('ul').getElements('.checkbox').each(clearCheck);
     } else {
-        fullCheck(this);
+        //TODO: this code blows chunks
+        if (this.getParent().hasClass('each') || this.getParent().hasClass('this')) {
+            var level = this.getParent();
+            //fragile...
+            while (!(level = level.getParent().getParent()).hasClass('nocheck'))
+                continue;
+            level.getElements('.checkbox').each(clearCheck);
+            fullCheck(this);
+            var checkLevel = this.getParent().getParent().getParent();
+            while (!checkLevel.hasClass('nocheck')) {
+                //Bleh, this sucks too
+                if (checkLevel.hasClass('each') || checkLevel.hasClass('this'))
+                    fullCheck(checkLevel.getChildren('.checkbox'));
+                else
+                    partialCheck(checkLevel.getChildren('.checkbox'));
+                checkLevel = checkLevel.getParent().getParent();
+            } 
+            //Return so we don't execute any of the code after this
+            return;
+        }
         this.getSiblings('ul').getElements('.checkbox').each(fullCheck);
+        fullCheck(this);
+        //TODO: Optimize this so it doesn't have to do it every time
+        //TODO: consider having a fullcheck of a different color to indicate this and each
+        var level = this.getParent();
+        while (!(level = level.getParent().getParent()).hasClass('nocheck'))
+            continue;
+        var specialElems = level.getElements('.dropItem.each');
+        specialElems.combine(level.getElements('.dropItem.this'));
+        specialElems.each(function(elem) {
+            var check = elem.getChildren('.checkbox');
+            //Shitty
+            if (typeOf(check) === 'elements' || typeOf(check) === 'array')
+                check = check[0];
+            if (check.retrieve('checked') === 'full') {
+                clearCheck(check);
+                checkParents(check);
+            }
+        });
     }
-
     checkParents(this);
 }
 
@@ -1075,7 +1775,7 @@ function attachEvents() {
     });
 
     dropContainer.addEvent('click:relay(.drop_button, .expand)', function () {
-        var menu = this.getSiblings('.dropMenu')[0];
+         var menu = this.getSiblings('.dropMenu')[0];
 
         if (!this.hasClass('visible') && this.hasClass('drop_button')) {
             dropContainer.getElements('.drop_button.visible').removeClass('visible');
@@ -1088,46 +1788,429 @@ function attachEvents() {
 
 attachEvents();
 
-//JSON building
-/*
-generateJSON() {
-    var components = curRule.childNodes;
-    var comp1 = "var comp1 = ";
-    var comp2 = "var comp2 = ";
-    var activeComp = comp1;
-    var comperator;
+//TODO: More guidance surrounding member rules, some sort of 'this' for department specification
 
-    //TODO: Handling assignment is gonna be wonky.
-    //As in other places, child node 0 is a text field
-    for (var i = 1; i < components.length; i++) {
+//Rule Exportation
+
+//WARNING: INHERENTLY AN EVAL BASED APPROACH
+function parseCondition(spec) {
+    var filterFunc = 'function(elem) {\n    if (';
+    for (var i = 0; i < spec.length; i++) {
+        var type = spec[i].type;
+        var compSpec = spec[i].spec;
+        switch(type) {
+        case 'variable':
+        case 'comparator':
+        case 'value':
+        case 'operator':
+            filterFunc += compSpec + ' ';
+            break;
+        case 'field':
+            filterFunc += 'elem.' + compSpec + ' ';
+            break;     
+        }   
+    }
+    filterFunc+= ')\n        return true;\n    else\n        return false;\n}'
+    return filterFunc;
+}
+
+
+function numToAlpha(n) {
+    var s = "";
+    while(n >= 0) {
+        s = String.fromCharCode(n % 26 + 97) + s;
+        n = Math.floor(n / 26) - 1;
+    }
+    return s;
+}
+
+varIndex = 0;
+//TODO: -THIS- and -Each- should uncheck everything else. Should not check children
+function itemFilter(idents, year) {
+    var dataset = getFirstKey(idents);
+    idents = idents[dataset];
+    dataset = year ? dataset + '.with("year", ' + year + ')' : 'current_' + dataset;
+    var parent = numToAlpha(varIndex++);
+    var itemdef = 'var ' + parent + ' = ' + dataset + ';\n';
+    var eachSet = new Array();
+    var thisSet = new Array();
+    //The set of changing 'this' identifiers in a foreach loop.
+    var thisMods = new Array();
+
+    var recurseFilter = function (parent, spec, identHier, level) {
+        var numValues = Object.getLength(spec);
+        if (numValues === 1)  {
+            Object.each(spec, function(value, key) {
+                if (key.substring(0, 7) === '-EACH- ')
+                    eachSet.push(identHier[level]);
+                if (key.substring(0, 7) === '-THIS- ')
+                    thisSet.push(identHier[level]);
+                else
+                    itemdef += parent + '.with(\'' + identHier[level] + '\', \'' + key + '\');\n';
+                return recurseFilter(parent, value, identHier, level+1);
+            });
+        } else if (numValues >= 2) {
+            var subs = new Array();
+            Object.each(spec, function(value, key) {
+                var nextParent = numToAlpha(varIndex++);
+                itemdef += 'var ' + nextParent + ' = ' + parent + '.clone().with(\'' + identHier[level] + '\', \'' + key + '\');\n';
+                var subset = recurseFilter(nextParent, value, identHier, level+1);
+                subs.push(subset);
+            });
+            var index = 0;
+            var newDef;
+            subs.each(function (varName) {
+                if (index === 0)
+                    newDef = varName;
+                else
+                    newDef += '.or(' + varName + ')';
+                index++;
+            });
+            itemdef += parent + ' = ' + newDef + ';\n';
+        }
+        return parent;
+    }
+
+    Object.each(idents, function(value, key) {
+        if (!isEmpty(value)) {
+            recurseFilter(parent, value, identHierarchy[key], 0)
+        }
+    });
+    
+    return [parent, itemdef, eachSet, thisSet];
+}
+
+function parseItem(modifiers, idents, defaultSetOp) {
+    //TODO: valid this identifiers
+    var conditions = new Array();
+    var year = false;
+    //This default field should be dependent on database;
+    var field = 'amount';
+    var setOp = defaultSetOp;
+    modifiers.each(function(element) { 
+        var type = element.retrieve('type');
+        var spec = element.retrieve('spec');
+        //resolve variables
+        if (type === 'variable') {
+            type = variables[spec].type;
+            spec = variables[spec].spec;
+        }
+        switch(type) {
+        case 'condition':
+            conditions.push(spec);
+            break;
+        case 'year':
+            year = spec;
+            break;
+        case 'set':
+            setOp = spec;
+            break;
+        case 'field':
+            field = spec;
+            break;
+        }
+    });
+
+    var itemCode = itemFilter(idents, year);
+    var itemVar = itemCode[0];
+    var itemdef = itemCode[1];
+
+    conditions.each(function(cond) {
+        itemdef += itemVar + '.filter(' + parseCondition(cond) + ')';
+    }); 
+
+    return [itemVar, itemdef, setOp, field, itemCode[2], itemCode[3]];
+                
+}
+//TODO: Each department, division, lineitem, etc.
+
+/* TODO: this rule:
+// Compute budget employee totals
+current_budget.with('ledger_description','Salaries & Benefits').forEach(function(){
+    var total = 0;
+    employees.with('department', this.department).with('division', this.division).forEach(function(){
+        total += this.total_cost;
+    });
+    this.amount = total;
+});
+*/
+
+//JS rule building
+
+function objectEquals(obj1, obj2) {
+    return (JSON.stringify(obj1) === JSON.stringify(obj2));
+}
+
+function generateJS() {
+    var components = curRule.getChildren();
+    var comp1 = '';
+    var comp2 = '';
+    var initCode = '';
+    var activeComp = '';
+    var comparator;
+
+    var memberOp = curRule.hasClass('members');
+    var memberItemVar = '';
+
+    var eachOp = curRule.hasClass('each');
+    var eachSet; 
+
+    //handle memberRules
+    if (memberOp) {
+        var members = curMembers.getChildren()[0];
+        //TODO: Variable handling
+        if (members.retrieve('type') === 'variable') {
+            var memberInfo = parseItem(members.getChildren(), variables[members.retrieve('spec')].spec);
+            initCode += memberInfo[1];
+            memberItemVar = memberInfo[0];
+        } else {
+            var memberInfo = parseItem(members.getChildren(), members.retrieve('spec'));
+            initCode += memberInfo[1];
+            memberItemVar = memberInfo[0];
+        }
+    }
+
+
+//TODO: Each should not be savable as a variable
+    if (eachOp) {
+        var each = curEach.getChildren()[0];
+        var eachInfo = parseItem(each.getChildren(), each.retrieve('spec'));
+        initCode += eachInfo[1];
+        eachItemVar = eachInfo[0];
+        eachSet = eachInfo[4];
+    }
+
+    for (var i = 0; i < components.length; i++) {
         var component = components[i];
-        var type = component.type;
+        var type = component.retrieve('type');
         var spec = component.retrieve('spec');
         //Variables need to be translated to their actual types. 
+        //TODO: not in the final version
         if (type == 'variable') {
             var comp = variables[component.retrieve('spec')];
             type = comp.type;
             spec = comp.spec;
         }
         switch(type) {
-        case 'condition':
-            break;
         case 'operator':
             activeComp += spec;
             break;
         case 'value':
             activeComp += spec;
             break;
-        case 'comperator':
-            activeComp = comp2
-            comperator = spec;
+        case 'comparator':
+            comp1 += activeComp;
+            activeComp = '';
+            comparator = spec;
             break;
         case 'item':
-            itemCount++;
+            //TODO: caching seen items ?
+            var itemInfo = parseItem(component.getChildren(), spec, 'sum');
+            var itemVar = itemInfo[0];
+            var itemdef = itemInfo[1];
+            var setOp = itemInfo[2];
+            var field = itemInfo[3];
+            initCode += itemdef;
+            var thisSet = itemInfo[5];
+            if (!memberOp && !eachOp && thisSet.length !== 0) {
+                //TODO: shitty error msg
+                displayError("-THIS- specifiers only allowed in member and each identifier rules.");
+                return false;
+            }
+            //Member ops need the elem.department, whereas eachops just need departmnet
+            var elem = memberOp ? 'elem.' : '';
+            thisSet.each(function(ident) {
+                itemVar += '.with(\'' + ident + '\', ' + elem + ident +')';
+            });
+            if (setOp)
+                itemVar = setOp + '(' + itemVar + ', \'' + field + '\')';
+            activeComp += itemVar;
             break;
+        case 'field':
+            if (!memberOp) {
+                displayError("Stand-alone fields are only allowed in member rules");
+                return false;
+            }                
+            //TODO: years
+            activeComp += 'elem.' + spec;
         }
-        //The rest of the code 
-}*/
+    }
+    comp2 += activeComp;
+
+    var ruleOutput = initCode + '\n';
+    //Actual rule check/assignment
+    if (memberOp) {
+        ruleOutput += memberItemVar + '.forEach(function(elem) {\n    ';
+        if (comparator === '=') {
+            ruleOutput += comp1 + comparator + comp2 + ';\n});\n';
+        } else {
+            ruleOutput += 'ensure(' + comp1 + ', \"' + comparator + '\", ' + comp2 + ');\n});\n';
+        }
+    } else if (eachOp) {
+        var depth = 1;
+        var last = eachSet[0];
+        ruleOutput += memberItemVar;
+        ruleOutput += '.byGroup(\'' + last + '\').forEach(function(' + last + ') {\n';
+        for (depth; depth < eachSet.length; depth++) {
+            ruleOutput += last + '.byGroup(\'' + eachSet[depth] + '\').forEach(function(' + eachSet[depth] + ') {\n';
+            last = eachSet[depth];
+        }
+        ruleOutput += 'ensure(' + comp1 + ', \"' + comparator + '\", ' + comp2 + ');\n';
+        for (var i = 0; i < depth; i++) 
+            ruleOutput += '});\n'
+    } else {
+        ruleOutput += 'ensure(' + comp1 + ', \"' + comparator + '\", ' + comp2 + ');\n';
+    }
+    return ruleOutput;
+}
+
+//JSON rep building
+
+function generateJSON() {
+    varIndex = 0;
+    var components = curRule.getChildren();
+    var repComps = new Array();
+    components.each(function(component) {
+        var obj = {};
+        obj.type = component.retrieve('type');
+        obj.html = component.innerText;
+        if (component.hasClass('item')) {
+            //Items can have subcomponents that make innerHTML not do what I want
+            if (obj.type === 'item') {
+                var carIndex = obj.html.indexOf('<');
+                if (carIndex > -1)
+                    obj.html = obj.html.substring(0, carIndex);
+            }
+
+            var children = component.getChildren();
+            if (children) {
+                obj.ch = new Array();
+                children.each(function(child) {
+                    var ch = {};
+                    ch.type = child.retrieve('type');
+                    ch.html = child.innerText;
+                    ch.spec = child.retrieve('spec');
+                    obj.ch.push(ch);
+                });
+            }
+        }
+        obj.spec = component.retrieve('spec');
+        repComps.push(obj);
+    });
+    var output = JSON.stringify(repComps);
+    return output;
+}
+
+//Human readable string building 
+
+var map = {'+':'plus', '-':'minus', '*':'times', '/':'over', '=':'is assigned to', '==':'must be equal to', '<':'must be less than', '>':'must be greater than'}; 
+
+function conditionString(spec) {
+    condString = 'where ';
+    for (var i = 0; i < spec.length; i++) {
+        var component = spec[i] 
+        condString += compToString(component.type, component.spec);
+    }
+}
+
+
+function itemObjString(name, obj, identHier, level) {
+    if (isEmpty(obj)) {
+        return name;
+    }
+    var retStr = '';
+    var index = 0;
+    Object.each(obj, function(value, key) {
+        if (index > 0) 
+            retStr += ' or ';
+        retStr += itemObjString(key, value, identHier, level+1);
+        index++;
+    });
+    if (level > 0)
+        retStr += ' within ' + identHier[level]  + ' ' + name;
+    return retStr;
+}
+
+function itemString(spec) {
+    //TODO set operator;
+    var retStr = '';
+    var index = 0 
+    Object.each(spec, function(value, name) {
+        if (index > 0) 
+            retStr += ' and ';
+        retStr += itemObjString('all ' + name, value, identHierarchy[name], 0);
+        index++;
+    });
+    //TODO: Condition, field, year handling
+    return retStr;
+}
+
+//TODO keep track of seen variables.
+function compToString(type, spec) {
+    //Variables need to be translated to their actual types. 
+    var closeBracket = false;
+    var retStr = '';
+    if (type == 'variable') {
+        retStr += spec;
+        if (seenVars.contains(spec))
+            return;
+        closeBracket = true;
+        var comp = variables[spec];
+        type = comp.type;
+        spec = comp.spec;
+        retStr += ' (';
+    }    
+
+    switch(type) {
+    case 'operator':
+        retStr +=  map[spec];
+        break;
+    case 'value':
+        retStr += spec;
+        break;
+    case 'comparator':
+        retStr += map[spec];
+        break; 
+    case 'item':
+        retStr += itemString(spec);
+        break;
+    }
+
+    if (closeBracket) 
+        retStr += ')';
+
+    return retStr;
+}
+
+//Variables we've already seen, so we don't have to expand them
+var seenVars = new Array();
+
+function generateString() {
+    var components = curRule.getChildren();
+    var outputStr = '';
+    var index = 0;
+    components.each(function(component) {
+        if (index > 0)
+            outputStr += ' ';
+
+        var component = components[i];
+        var type = component.retrieve('type');
+        var spec = component.retrieve('spec');
+        outputStr += compToString(type, spec);
+        index++;
+    });
+    seenVars.empty()
+
+    return outputStr;
+}
+
+function publishRule() {
+    //if(validSemantics(curRule)) {
+        //console.log(generateString());
+        console.log(generateJSON());
+        console.log(generateJS());
+    //}
+}
 
 </script>
 </body>
