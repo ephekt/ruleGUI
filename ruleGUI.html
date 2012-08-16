@@ -2,6 +2,8 @@
 <head>
 <title>Rule Creator</title>
 <link rel="stylesheet" type="text/css" href="style/main.css" />
+<link rel="stylesheet" type="text/css" href="./Assets/Autocompleter.css" />
+
 <link rel="icon" 
       type="image/png" 
       href="favicon.jpg"/>
@@ -25,13 +27,11 @@
     <ul id="curEach" class="compList" style="width:15%"></ul>
   </div>
 </div>
-<!--
 <div style="float:left">
   <span id="autoDraggable" class="draggable"></span>
   <br/>
   <input id="autoComplete"></input>
 </div>
--->
 <ul id="curRule" class="compList" style="width:80%;"></ul>
 <button class="circle" id="finishRule" onclick="publishRule();">Finish Rule</button>
 
@@ -155,7 +155,7 @@ var uniqueFields = ["amount"];
 //Initialization Code;
 
 //Defines a time (in milliseconds) that constitutes a click.
-CLICKTIME = 200;
+CLICKTIME = 100;
 
 //Defines the timeout for error messages
 ERRORTIME = 10000;
@@ -164,7 +164,8 @@ errorArea = $$($('error'));
 
 /*Attach specs to draggables. These specify what the various
   draggable components represent for the purpose of code
-  generation 
+  generation. Also attaches type, which specifies the type
+  of component that it is.
  */
 addOp = $('addOp');
 addOp.store('spec','+');
@@ -222,20 +223,15 @@ maxSet = $('maxSet');
 maxSet.store('spec','maximum');
 maxSet.store('type','set');
 
-
 $('selectCond').store('type', 'condition');
 
 lastYearDrag = $('lastYear')
 lastYearDrag.store('type', 'year');
 lastYearDrag.store('spec', '(current_year-1)');
 
-
-//Selconst is a mootools object to cleanly set the innerHTML
-selConst = $$($('selectConst'));
-
+selConst = $('selectConst');
 selConst.store('type', 'value');
 
-//constval is a DOM object because it's easier to set events for them
 constVal = $('constValue');
 
 //When values are entered in the constant input box, the draggable 
@@ -253,6 +249,10 @@ yearConst = $('yearConst')
 yearsAgo.store('spec', undefined);
 yearConst.store('spec', undefined);
 
+/* This function sets the values for the years ago draggable.
+   It reads the value of the corresponding years ago text field,
+   and if it's a positive integer sets the draggable spec accordingly.
+   If the spec is invalid, the element is not draggable */
 yearsAgoValue.onkeyup = function() {
     var val = toNum(yearsAgoValue.value.trim());
     if (isNaN(val) || val < 1 || !isInt(val)) {
@@ -262,11 +262,13 @@ yearsAgoValue.onkeyup = function() {
     }
     yearsAgo.store('spec', 'current_year - ' + val);
     if (val === 1)
-        yearsAgo.set('text', 'Last Year');
+        yearsAgo.set('text', val + ' Year Ago');
     else
         yearsAgo.set('text', val + ' Years Ago');
 }
 
+/* Similar to the relative year specification, except for 
+   absolute years */
 yearConstValue.onkeyup = function() {
     var val = toNum(yearConstValue.value.trim());
     if (isNaN(val) || val < 1 || !isInt(val)) {
@@ -327,7 +329,7 @@ $('eachShow').onclick=function() {
 };
 
 
-//Initializes a searchable select box for variables and conditions
+//Initializes a searchable select box for variables, saved conditions, saved items, and fields
 valueSel = new VarSelect($('valueBox'));
 valueSel.title.set('html', 'Variables');
 
@@ -340,7 +342,8 @@ itemSel.title.set('html', 'Items');
 fieldSel = new VarSelect($('fieldBox'));
 fieldSel.title.set('html', 'Fields');
 
-//initializes the field selector by adding values
+//initializes the field selector by adding values.
+//TODO: pull these values from the back end
 function initFields(fields) {
     for (var i = 0; i < fields.length; i++) {
         listDraggable(fieldSel.addOption(fields[i]), 'field', 'field');
@@ -360,7 +363,7 @@ curView = '';
 var variables = {};
 
 
-/*Returns the number form of a passed in string, removing commas
+/* Returns the number form of a passed in string, removing commas
   (and possibly doing other special handling). Returns NaN if string
   cannot be represented as a number */
 function toNum(numStr){
@@ -385,12 +388,13 @@ function showChoices(toShow, div){
     }
     //if we're already in a given view, do nothing
     if (toShow == curView)
-        return
+        return;
+
     curView = toShow;
-    var children = $(div).getChildren('div');
-    for (var i = 0; i < children.length; i++) { //>
-        children[i].setStyle('display','none');
-    }
+    //Hide all the divs
+    $(div).getChildren('div').each(function(childDiv) {
+        childDiv.setStyle('display','none');
+    });
 
     $(toShow).style.display = '';
    
@@ -403,14 +407,16 @@ function capCondition() {
     if (validSemantics(curCond)) {
         var children = curCond.getChildren();
         var spec = new Array();
-        children.each(function(child) {
-            spec.push({type:child.retrieve('type'), spec: child.retrieve('spec'), html: child.innerHTML});
+        children.each(function(component) {
+            spec.push({type:component.retrieve('type'), spec: component.retrieve('spec'), html: component.innerHTML});
         });
         return spec;
     }
     return null;
 }
 
+/* Displays the error given in msg above the rule. 
+   Error messages dissapear after a certain amount of time */
 function displayError(msg) {
     if (errorTimeout)
         window.clearTimeout(errorTimeout);
@@ -419,6 +425,7 @@ function displayError(msg) {
         errorArea.set('html', '');
     }, ERRORTIME);    
 }
+
 /*Locks in and displays a value for the current rule, represented either 
   symbolically or numerically. Takes the value to display, and checks its
   validity. 
@@ -434,7 +441,7 @@ function validValue(value) {
     return true;
 };
 
-nouns =new Array('value', 'item', 'field');
+nouns = new Array('value', 'item', 'field');
 verbs = new Array('operator', 'comparator', 'nothing');
 ordering = {operator: nouns, value: verbs, item: verbs, field:verbs, comparator: nouns};
 
@@ -456,6 +463,7 @@ function validSemantics(compList) {
     var itemCount = 0;
     var afterComparator = false;
     var afterCount = 0;
+
     for (var i = 0; i < components.length; i++) {
         if (afterComparator)
             afterCount++;
@@ -564,19 +572,20 @@ function cloneWithStorage(element) {
     return clone;
 }
 
-
+/* Measures if a component element is outside of its container, and returns 
+   true if it is (to mark it for deletion). Also deletes its draggable clone
+*/
 function destroyOutside(element, container) {
-    var ret = false;
     var position = element.getPosition(container);
     var containerDims = container.getSize();
     var compDims = container.getSize();
     if (position.y < -30-compDims.y || position.y > (containerDims.y + 30) || position.x < -30-compDims.x || position.x > (containerDims.x + 30)) {
-        ret = true;
         /* This destroys the clone, not the actual element. We need to handle element
            deletion at the oncomplete */
-        element.destroy()
+        element.destroy();
+        return true;
     }
-    return ret;
+    return false;
 }
     
 
@@ -638,7 +647,6 @@ curCond.makeResizable({
 });*/
 
 
-
 newConditionNameBox = $('newConditionName');
 
 
@@ -657,7 +665,7 @@ function regenerateItems(specList) {
     for (var i = 0; i < specList.length; i++) {
         var compSpec = specList[i];
         var text = compSpec.html;
-        var comp = new Element('li', {class:'draggable', html:text});
+        var comp = new Element('span', {class:'draggable', html:text});
         var type = compSpec.type;
         var dragClass = type;
 
@@ -674,7 +682,8 @@ function regenerateItems(specList) {
             modifiers.each(function(mod) {
                 mod.inject(comp);
             });
-        }                          
+        }             
+        addHover(comp);
         components.push(comp);
     }
     return components;
@@ -713,7 +722,8 @@ itemVar = $('itemVar');
 
 /*Creates a variable for rule use. Rejects empty variable names
   and non-number values. Assigning a variable twice overwrites
-  the previous value
+  the previous value.
+  //TODO: integrate with back-end
 */
 function createVariable(type) {
     var variableName = makeSafe(window['new' + type.capitalize() + 'NameBox'].value.trim());
@@ -739,18 +749,8 @@ function createVariable(type) {
         }
         newValueAmtBox.value = '';  
         break;
+
     case 'item': 
-        /*
-        var flags = {};
-        spec = getSelectedItem(flags);
-        if ('each' in flags) {
-            displayError('-EACH- identifiers are not allowed in variables');
-            return false;
-        }
-        if ('this' in flags) {
-            displayError('-THIS- identifiers are not allowed in variables');
-            return false;
-        }*/
         var item = itemVar.getChildren()[0];
         if (item) 
             spec = item.retrieve('spec');
@@ -759,6 +759,7 @@ function createVariable(type) {
             return;
         }            
         break;
+
     case 'condition':
         spec = capCondition();
         if (spec == null) 
@@ -818,20 +819,26 @@ newValueAmtBox.addEvent('keydown', function(event){
   and causes the selected variable to be displayed in the variable
   creation fields, either for editting or simply viewing */
 function editVariable(variableName) {
-    var type = variables[variableName].type;
+    if (!variableName)
+        return;
+    var variable = variables[variableName];
+    if (!variable)
+        return;
+
+    var type = variable.type;
     if (type == 'condition') {
         newConditionNameBox.value = variableName;
-        editCondition(variables[variableName].spec);
+        editCondition(variable.spec);
         condSelect.style.display = '';
     } else if (type == 'item') {
-        editItem(variables[variableName].spec);
+        editItem(variable.spec);
         newItemNameBox.value = variableName;
         showChoices('itemSelect');
     } else if (type == 'value') {
         //This is kind of poor form, as it relies on value being
         //undefined to filter out bad clicks
         newValueNameBox.value = variableName;
-        newValueAmtBox.value = variables[variableName].spec;
+        newValueAmtBox.value = variable.spec;
         showChoices('valueSelect');
     }
 }           
@@ -1021,17 +1028,27 @@ function listDraggable(elem, dragClassOverride, typeOverride, specOverride, mous
 /* Right at the beginning, we make elements with the class 'draggable' actually draggable.
    We also do a bit of special handling */
 window.addEvent('domready', function(){
-/*
+
+    var drgbs = $$('.draggable');
+    drgbs.each(function (draggable) {
+        var spec = draggable.retrieve('spec');
+        if (!spec)
+            return; 
+
+        tokens.push({value: draggable.get('text')
+                     , type: draggable.retrieve('type')
+                     , spec: draggable.retrieve('spec')
+                    });
+    });
+
     new Autocompleter.Local('autoComplete', tokens, {
         minLength: 1,
         selectMode: 'type-ahead',
         injectChoice: injectChoice,
         choiceFunction: choiceFunction,
         selectFunction: selectFunction
-    });
-*/
+    })
     var timeout;
-    var drgbs = $$('.draggable');
     drgbs.each(function(drgb) {
         addHover(drgb);
     });
@@ -1517,8 +1534,6 @@ function createDropDownItem(specObj, id, key, leaf, nocheck) {
 
 /* Fills our a dropdown hierarchically using a JSON object. Uses empty objects as leaf nodes. */
 function fillHierarchy(level, values, specObj, specEnd, id, identHier, identIndex) {
-//TODO: very few this identifiers make sense in most contexts
-    //TODO: kill items that have this as an identifier
     if (typeOf(values) === 'array') {
         values.include('-EACH- ' + identHier[identIndex]);
         values.each(function(ident) {
@@ -1562,8 +1577,6 @@ function fillHierarchy(level, values, specObj, specEnd, id, identHier, identInde
 
 //I never really investigated this function to know how it works
 function autoHide(context) {
-    //TODO: Float EACH options
-
     //Auto fold full and empty submenus
     context.getElements('.fullCheck, .emptyCheck')
         .getSiblings('.expand')
@@ -1740,8 +1753,6 @@ function attachEvents() {
 
 attachEvents();
 
-//TODO: More guidance surrounding member rules, some sort of 'this' for department specification
-
 //Rule Exportation
 
 //WARNING: INHERENTLY AN EVAL BASED APPROACH
@@ -1777,7 +1788,6 @@ function numToAlpha(n) {
 }
 
 varIndex = 0;
-//TODO: -THIS- and -Each- should uncheck everything else. Should not check children
 function itemFilter(idents, year) {
     var dataset = getFirstKey(idents);
     idents = idents[dataset];
@@ -1833,7 +1843,6 @@ function itemFilter(idents, year) {
 }
 
 function parseItem(modifiers, idents, defaultSetOp) {
-    //TODO: valid this identifiers
     var conditions = new Array();
     var year = false;
     //This default field should be dependent on database;
@@ -1874,18 +1883,6 @@ function parseItem(modifiers, idents, defaultSetOp) {
     return [itemVar, itemdef, setOp, field, itemCode[2], itemCode[3]];
                 
 }
-//TODO: Each department, division, lineitem, etc.
-
-/* TODO: this rule:
-// Compute budget employee totals
-current_budget.with('ledger_description','Salaries & Benefits').forEach(function(){
-    var total = 0;
-    employees.with('department', this.department).with('division', this.division).forEach(function(){
-        total += this.total_cost;
-    });
-    this.amount = total;
-});
-*/
 
 //JS rule building
 
@@ -1922,8 +1919,6 @@ function generateJS() {
         }
     }
 
-
-//TODO: Each should not be savable as a variable
     if (eachOp) {
         var each = curEach.getChildren()[0];
         var eachInfo = parseItem(each.getChildren(), each.retrieve('spec'));
@@ -2193,31 +2188,41 @@ function isInt(n) {
 }
 
 function choiceFunction(queryValue) {
-    var numVal = toNum(queryValue.trim());
-    if (isNaN(numVal))
-        return;
-    
     tokenArray = new Array();
-    var valToken = {name: numVal
+
+    if (!queryValue)
+        return [];
+
+    var numVal = toNum(queryValue);
+    if (isNaN(numVal))
+        return [];
+    
+    //Used to correct for if someone writes 12.
+    //TODO: do this better
+
+    var valIsInt = isInt(numVal);
+    var valToken = {value: numVal + (valIsInt ? '.0' : '')
                     , type: 'value'
                     , spec: numVal
                    };
     tokenArray.push(valToken);
+    
 
-    if (numVal > 0 && isInt(numVal)) {
-        var yearToken = {name: 'Year' + numVal
+    if (numVal > 0 && valIsInt) {
+        pointZero = '.0';
+        var yearToken = {value: numVal + ' (Year)'
                          , type: 'year'
                          , spec: numVal
                         };
         tokenArray.push(yearToken);
-        var yeaRelToken = {name: numVal + 'Years Ago'
+        var yearRelToken = {value: numVal + ' Years Ago'
                            , type: 'year'
                            , spec: 'current_year - ' + numVal
                           };
         tokenArray.push(yearRelToken);
     }
     
-    tokenArray.each(injectChoice, this);
+    return tokenArray;
 }
 
 </script>

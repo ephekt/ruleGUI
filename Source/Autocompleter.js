@@ -112,9 +112,9 @@ var Autocompleter = new Class({
 	}, this.options.fxOptions)).addEvent('onStart', Chain.prototype.clearChain).set(0);
 	this.element.setProperty('autocomplete', 'off')
 	    .addEvent((Browser.ie || Browser.safari || Browser.chrome) ? 'keydown' : 'keypress', this.onCommand.bind(this))
-	    .addEvent('click', this.onCommand.bind(this, [false]))/*
-	    .addEvent('focus', this.toggleFocus.bind(this, [true]).delay(100))
-	    .addEvent('blur', this.toggleFocus.bind(this, [false]).delay(100))
+	    .addEvent('click', this.onCommand.bind(this, false))/*
+	    .addEvent('focus', this.toggleFocus.bind(this, true).delay(100))
+	    .addEvent('blur', this.toggleFocus.bind(this, false).delay(100))
 */
     },
 
@@ -158,6 +158,8 @@ var Autocompleter = new Class({
 
     setSelection: function(choice, finish) {
 	var input = this.selected.inputValue, value = input;
+        if (typeOf(input) !== 'string')
+            input = input.toString();
 	var start = this.queryValue.length, end = input.length;
 	if (input.substr(0, start).toLowerCase() != this.queryValue.toLowerCase()) start = 0;
 	this.observer.setValue(value);
@@ -254,7 +256,8 @@ var Autocompleter = new Class({
 	    || !this.cached.length
 	    || this.cached.length >= this.options.maxChoices
 	    || this.queryValue) return false;
-	this.update(this.filter(this.cached));
+        var cFunc = choiceFunction.bind(this, this.queryValue);
+	this.update(this.filter(this.cached).combine(cFunc()));
 	return true;
     },
 
@@ -272,8 +275,6 @@ var Autocompleter = new Class({
 		choice.inputValue = token.value;
 		this.addChoiceEvents(choice).inject(this.choices);
 	    }, this);
-            if (choiceFunction)
-                choiceFunction(queryValue).bind(this)
 	    this.showChoices();
 	}
     },
@@ -319,7 +320,9 @@ var Autocompleter = new Class({
      */
     markQueryValue: function(str) {
 	if (!str) return; // if str is null
-	
+	if (typeOf(str) !== 'string') 
+            str = str.toString();
+
 	return (!this.options.markQuery || !this.queryValue) ? str
 	    : str.replace(new RegExp('(' + ((this.options.filterSubset) ? '' : '^') + this.queryValue.escapeRegExp() + ')', (this.options.filterCase) ? '' : 'i'), '<span class="autocompleter-queried">$1</span>');
     },
@@ -334,8 +337,8 @@ var Autocompleter = new Class({
      */
     addChoiceEvents: function(el) {
 	return el.addEvents({
-	    'mouseover': this.choiceOver.bind(this, [el]),
-	    'click': this.choiceSelect.bind(this, [el])
+	    'mouseover': this.choiceOver.bind(this, el),
+	    'click': this.choiceSelect.bind(this, el)
 	});
     }
 });

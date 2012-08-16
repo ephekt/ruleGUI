@@ -25,8 +25,7 @@ Autocompleter.Local = new Class({
 	},
 
 	query: function() {
-            var cFunc = choiceFunction.bind(this, this.queryValue);
-	    this.update(this.filter().combine(cFunc()));
+		this.update(this.filter());
 	}
 
 });
